@@ -3,20 +3,21 @@ package weatherstation;
 import java.util.Scanner;
 
 /**
- * Write a description of class ConvertValues here.
+ * Converts values received from the VP2Pro weather station
+ * database to readable values.
  * 
- * @author (your name) 
+ * @author CoenB95, Dokugan 
  * @version (a version number or a date)
  */
 public class ConvertValues
 {
 	/**
-	* Luchtdruk
+	* Converts the air pressure.
 	*
-	* @param mval	Meetwaarde van het vp2pro weerstation
-	* @return De luchtdruk in mbar
+	* @param mval the value from the database.
+	* @return the amount of air-pressure in mBar.
 	*/
-	public static double luchtdruk(double mval)
+	public static double airPressure(double mval)
 	{
 		double mbar;
 		mbar = mval / 100;
@@ -24,12 +25,12 @@ public class ConvertValues
 	}
 	
 	/**
-	* Temperatuur
+	* Converts the temperature.
 	*
-	* @param mval	Meetwaarde van het vp2pro weerstation
-	* @return De temperatuur in graden Celcius
+	* @param mval the value from the database.
+	* @return the temperature in degrees Celsius.
 	*/
-	public static double temperatuur(double mval)
+	public static double temperature(double mval)
 	{
 		double celsius;
 		celsius = (mval - 32) * 5/9;
@@ -38,23 +39,23 @@ public class ConvertValues
 	
 
 	/**
-	 * Relatieve Luchtvochtigheid
+	 * Converts the relative humidity
 	 *
-	 * @param mval	Meetwaarde van het vp2pro weerstation
-	 * @return De relatieve luchtvochtigheid in procenten
+	 * @param mval the value from the database.
+	 * @return the relative humidity in percents.
 	 */
-	public static double luchtVochtigheid(double mval)
+	public static double humidity(double mval)
 	{
 		return 1;
 	}
 
 	/**
-	 * Windsnelheid
+	 * Converts the wind speed.
 	 *
-	 * @param mval	Meetwaarde van het vp2pro weerstation
-	 * @return De windsnelheid in km/h
+	 * @param mval the value from the database.
+	 * @return the wind speed in km/h. 
 	*/
-	public static double windSnelheid(double mval)
+	public static double windSpeed(double mval)
 	{
 		double kph;
 		kph = mval * 1.609344;
@@ -62,32 +63,32 @@ public class ConvertValues
 	}
 	
 	/**
-	* Windrichting
+	* Converts the wind direction.
 	*
-	* @param mval	Meetwaarde van het vp2pro weerstation
-	* @return De windrichting in graden
+	* @param mval the value from the database.
+	* @return the wind direction in degrees.
 	*/	
-	public static double windRichting(double mval)
+	public static double windDirection(double mval)
 	{
 		return 1;
 	}
 	
 	/**
-	* Regenmeter
+	* Converts the amount of rain.
 	*
-	* @param mval	Meetwaarde van het vp2pro weerstation
-	* @return De hoeveelheid regen in mm
+	* @param mval the value from the database.
+	* @return the amount of rain in mm.
 	*/	
-	public static double regenmeter(double mval)
+	public static double rainAmount(double mval)
 	{
 		return 1;
 	}
 	
 	/**
-	* uvIndex
+	* Converts the uv index.
 	*
-	* @param mval	Meetwaarde van het vp2pro weerstation
-	* @return De windrichting in graden
+	* @param mval the value from the database.
+	* @return the uv index.
 	*/
 	public static double uvIndex(double mval)
 	{
@@ -95,12 +96,12 @@ public class ConvertValues
 	}
 	
 	/**
-	* batterySpanning
+	* Converts the battery voltage.
 	*
-	* @param mval	Meetwaarde van het vp2pro weerstation
-	* @return De battery spanning in Volt
+	* @param mval the value from the database.
+	* @return the battery voltage.
 	*/
-	public static double batterySpanning(double mval)
+	public static double batteryVoltage(double mval)
 	{
 		return 1;
 	}
@@ -113,7 +114,7 @@ public class ConvertValues
 		Scanner reader = new Scanner(System.in);
 		input = reader.nextInt();
 		
-		output = luchtdruk(input);
+		output = airPressure(input);
 		
 		System.out.println(output);
 		reader.close();
