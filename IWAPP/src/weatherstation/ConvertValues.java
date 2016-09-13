@@ -14,7 +14,7 @@ public class ConvertValues
 	* @param mval	Meetwaarde van het vp2pro weerstation
 	* @return De luchtdruk in mbar
 	*/
-	public double luchtdruk(short mval)
+	public static double luchtdruk(short mval)
 	{
 		double pa;
 		pa = mval / 1000 * 3386.38866667;
@@ -27,7 +27,7 @@ public class ConvertValues
 	* @param mval	Meetwaarde van het vp2pro weerstation
 	* @return De temperatuur in graden Celcius
 	*/
-	public double temperatuur(short mval)
+	public static double temperatuur(short mval)
 	{
 		double celsius;
 		celsius = (mval - 32) * 5/9;
@@ -41,7 +41,7 @@ public class ConvertValues
 	 * @param mval	Meetwaarde van het vp2pro weerstation
 	 * @return De relatieve luchtvochtigheid in procenten
 	 */
-	public double luchtVochtigheid(short mval)
+	public static double luchtVochtigheid(short mval)
 	{
 		return 1;
 	}
@@ -52,9 +52,11 @@ public class ConvertValues
 	 * @param mval	Meetwaarde van het vp2pro weerstation
 	 * @return De windsnelheid in km/h
 	*/
-	public double windSnelheid(short mval)
+	public static double windSnelheid(short mval)
 	{
-		return 1;
+		double kph;
+		kph = mval * 1.609344;
+		return kph;
 	}
 	
 	/**
@@ -63,7 +65,7 @@ public class ConvertValues
 	* @param mval	Meetwaarde van het vp2pro weerstation
 	* @return De windrichting in graden
 	*/	
-	public double windRichting(short mval)
+	public static double windRichting(short mval)
 	{
 		return 1;
 	}
@@ -74,7 +76,7 @@ public class ConvertValues
 	* @param mval	Meetwaarde van het vp2pro weerstation
 	* @return De hoeveelheid regen in mm
 	*/	
-	public double regenmeter(short mval)
+	public static double regenmeter(short mval)
 	{
 		return 1;
 	}
@@ -85,7 +87,7 @@ public class ConvertValues
 	* @param mval	Meetwaarde van het vp2pro weerstation
 	* @return De windrichting in graden
 	*/
-	public double uvIndex(short mval)
+	public static double uvIndex(short mval)
 	{
 		return 1;
 	}
@@ -96,13 +98,13 @@ public class ConvertValues
 	* @param mval	Meetwaarde van het vp2pro weerstation
 	* @return De battery spanning in Volt
 	*/
-	public double batterySpanning(short mval)
+	public static double batterySpanning(short mval)
 	{
 		return 1;
 	}
 	
-	public void main(String[] args)
+	public static void main(String[] args)
 	{
-		
+		System.out.println("test");
 	}
 }
