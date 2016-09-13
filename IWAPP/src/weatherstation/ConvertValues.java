@@ -89,6 +89,20 @@ public class ConvertValues
 		return batt;
 	}
 	
+	public static String sunrise(short mval)
+	{
+		int minutes = mval%100;
+		int hours = (mval-minutes)/100;
+		return hours + ":" + minutes;
+	}
+	
+	public static String sunset(short mval)
+	{
+		int minutes = mval%100;
+		int hours = (mval-minutes)/100;
+		return hours + ":" + minutes;
+	}
+	
 	public static void main(String[] args)
 	{
 		double input;
