@@ -20,7 +20,7 @@ public class ConvertValues
 	public static double airPressure(double mval)
 	{
 		double mbar;
-		mbar = mval / 100;
+		mbar = mval / 1000 * 3386.38866667;
 		return mbar;
 	}
 	
@@ -111,12 +111,14 @@ public class ConvertValues
 		double input;
 		double output;
 		
+		System.out.println("input");
+		
 		Scanner reader = new Scanner(System.in);
 		input = reader.nextInt();
 		
-		output = airPressure(input);
+		//output = luchtdruk(input);
 		
-		System.out.println(output);
+		//System.out.println(output);
 		reader.close();
 	}
 }
