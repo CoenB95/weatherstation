@@ -1,5 +1,7 @@
 package weatherstation;
 
+import java.util.Scanner;
+
 /**
  * Write a description of class ConvertValues here.
  * 
@@ -14,11 +16,11 @@ public class ConvertValues
 	* @param mval	Meetwaarde van het vp2pro weerstation
 	* @return De luchtdruk in mbar
 	*/
-	public static double luchtdruk(short mval)
+	public static double luchtdruk(double mval)
 	{
-		double pa;
-		pa = mval / 1000 * 3386.38866667;
-		return pa;
+		double mbar;
+		mbar = mval / 100;
+		return mbar;
 	}
 	
 	/**
@@ -27,7 +29,7 @@ public class ConvertValues
 	* @param mval	Meetwaarde van het vp2pro weerstation
 	* @return De temperatuur in graden Celcius
 	*/
-	public static double temperatuur(short mval)
+	public static double temperatuur(double mval)
 	{
 		double celsius;
 		celsius = (mval - 32) * 5/9;
@@ -41,7 +43,7 @@ public class ConvertValues
 	 * @param mval	Meetwaarde van het vp2pro weerstation
 	 * @return De relatieve luchtvochtigheid in procenten
 	 */
-	public static double luchtVochtigheid(short mval)
+	public static double luchtVochtigheid(double mval)
 	{
 		return 1;
 	}
@@ -52,7 +54,7 @@ public class ConvertValues
 	 * @param mval	Meetwaarde van het vp2pro weerstation
 	 * @return De windsnelheid in km/h
 	*/
-	public static double windSnelheid(short mval)
+	public static double windSnelheid(double mval)
 	{
 		double kph;
 		kph = mval * 1.609344;
@@ -65,7 +67,7 @@ public class ConvertValues
 	* @param mval	Meetwaarde van het vp2pro weerstation
 	* @return De windrichting in graden
 	*/	
-	public static double windRichting(short mval)
+	public static double windRichting(double mval)
 	{
 		return 1;
 	}
@@ -76,7 +78,7 @@ public class ConvertValues
 	* @param mval	Meetwaarde van het vp2pro weerstation
 	* @return De hoeveelheid regen in mm
 	*/	
-	public static double regenmeter(short mval)
+	public static double regenmeter(double mval)
 	{
 		return 1;
 	}
@@ -87,7 +89,7 @@ public class ConvertValues
 	* @param mval	Meetwaarde van het vp2pro weerstation
 	* @return De windrichting in graden
 	*/
-	public static double uvIndex(short mval)
+	public static double uvIndex(double mval)
 	{
 		return 1;
 	}
@@ -98,13 +100,22 @@ public class ConvertValues
 	* @param mval	Meetwaarde van het vp2pro weerstation
 	* @return De battery spanning in Volt
 	*/
-	public static double batterySpanning(short mval)
+	public static double batterySpanning(double mval)
 	{
 		return 1;
 	}
 	
 	public static void main(String[] args)
 	{
-		System.out.println("test");
+		double input;
+		double output;
+		
+		Scanner reader = new Scanner(System.in);
+		input = reader.nextInt();
+		
+		output = luchtdruk(input);
+		
+		System.out.println(output);
+		reader.close();
 	}
 }
