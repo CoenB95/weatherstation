@@ -133,7 +133,10 @@ public class ConvertValues
 	
 	public static double heatindex(short mval1, short mval2)
 	{
-		return 1;
+		double temp = mval1/10.0;
+		double heatindex = -42.379 + (2.04901523 * temp) + (10.14333127*mval2) + (-0.22475541 * temp * mval2) + (-0.006873783 * temp * temp) + ( -0.05481717 * mval2*mval2) + ( 0.00122874* temp*temp * mval2 ) + (0.00085282 * temp * mval2*mval2) + ( -0.00000199* temp*temp * mval2*mval2);
+        heatindex = (heatindex - 32) / 1.8;
+        return heatindex;
 	}
 	
 	public static void main(String[] args)
