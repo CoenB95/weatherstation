@@ -19,7 +19,7 @@ public class ConvertValues
 	public static double luchtdruk(double mval)
 	{
 		double mbar;
-		mbar = mval / 100;
+		mbar = mval / 1000 * 3386.38866667;
 		return mbar;
 	}
 	
@@ -34,18 +34,6 @@ public class ConvertValues
 		double celsius;
 		celsius = (mval - 32) * 5/9;
 		return celsius;
-	}
-	
-
-	/**
-	 * Relatieve Luchtvochtigheid
-	 *
-	 * @param mval	Meetwaarde van het vp2pro weerstation
-	 * @return De relatieve luchtvochtigheid in procenten
-	 */
-	public static double luchtVochtigheid(double mval)
-	{
-		return 1;
 	}
 
 	/**
@@ -110,12 +98,14 @@ public class ConvertValues
 		double input;
 		double output;
 		
+		System.out.println("input");
+		
 		Scanner reader = new Scanner(System.in);
 		input = reader.nextInt();
 		
-		output = luchtdruk(input);
+		//output = luchtdruk(input);
 		
-		System.out.println(output);
+		//System.out.println(output);
 		reader.close();
 	}
 }
