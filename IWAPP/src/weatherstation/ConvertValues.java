@@ -32,7 +32,7 @@ public class ConvertValues
 	public static double temperatuur(double mval)
 	{
 		double celsius;
-		celsius = (mval - 32) * 5/9;
+		celsius = (mval/10 - 32)/ 1.8;
 		return celsius;
 	}
 
@@ -52,24 +52,20 @@ public class ConvertValues
 	/**
 	* Windrichting
 	*
-	* @param mval	Meetwaarde van het vp2pro weerstation
-	* @return De windrichting in graden
-	*/	
-	public static double windRichting(double mval)
-	{
-		return 1;
-	}
-	
+
 	/**
 	* Regenmeter
 	*
 	* @param mval	Meetwaarde van het vp2pro weerstation
 	* @return De hoeveelheid regen in mm
-	*/	
-	public static double regenmeter(double mval)
+	*/
+	public double regenmeter(short mval)
 	{
-		return 1;
+		double rain;
+		rain = mval *0.2;
+		return rain;
 	}
+
 	
 	/**
 	* uvIndex
@@ -79,7 +75,9 @@ public class ConvertValues
 	*/
 	public static double uvIndex(double mval)
 	{
-		return 1;
+		double uv;
+		uv = mval/10;
+		return uv;
 	}
 	
 	/**
