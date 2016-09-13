@@ -85,7 +85,8 @@ public class ConvertValues
 	*/
 	public static double batteryVoltage(double mval)
 	{
-		return 1;
+		double batt = mval * 0.005859375;
+		return batt;
 	}
 	
 	public static void main(String[] args)
