@@ -16,7 +16,9 @@ public class ConvertValues
 	*/
 	public double luchtdruk(short mval)
 	{
-		return 1;
+		double pa;
+		pa = mval / 1000 * 3386.38866667;
+		return pa;
 	}
 	
 	/**
