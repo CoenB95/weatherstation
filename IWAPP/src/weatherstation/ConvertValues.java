@@ -29,7 +29,9 @@ public class ConvertValues
 	*/
 	public double temperatuur(short mval)
 	{
-		return 1;
+		double celsius;
+		celsius = (mval - 32) * 5/9;
+		return celsius;
 	}
 	
 
