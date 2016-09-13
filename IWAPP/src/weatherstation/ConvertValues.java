@@ -99,9 +99,9 @@ public class ConvertValues
 		Scanner reader = new Scanner(System.in);
 		input = reader.nextInt();
 		
-		//output = luchtdruk(input);
+		output = airPressure(input);
 		
-		//System.out.println(output);
+		System.out.println(output);
 		reader.close();
 	}
 }
