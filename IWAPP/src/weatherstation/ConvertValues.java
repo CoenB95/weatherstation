@@ -33,7 +33,7 @@ public class ConvertValues
 	public static double temperature(short mval)
 	{
 		double celsius;
-		celsius = (mval/10 - 32)/ 1.8;
+		celsius = (mval/10.0 - 32)/ 1.8;
 		return celsius;
 	}
 
