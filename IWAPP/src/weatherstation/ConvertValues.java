@@ -11,6 +11,13 @@ import java.util.Scanner;
  */
 public class ConvertValues
 {
+	
+	public static final short SNOW = 		0b0001_0000;
+	public static final short SUN = 		0b0000_1000;
+	public static final short PARTIAL_SUN =	0b0000_0100;
+	public static final short CLOUD = 		0b0000_0010;
+	public static final short RAIN = 		0b0000_0001;
+	
 	/**
 	* Converts the air pressure.
 	*
