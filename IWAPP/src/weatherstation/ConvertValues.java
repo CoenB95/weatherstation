@@ -91,16 +91,16 @@ public class ConvertValues
 	
 	public static String sunrise(short mval)
 	{
-		int minutes = mval%100;
-		int hours = (mval-minutes)/100;
-		return hours + ":" + minutes;
+		return sunConversion(mval);
 	}
 	
 	public static String sunset(short mval)
 	{
-		int minutes = mval%100;
-		int hours = (mval-minutes)/100;
-		return hours + ":" + minutes;
+		return sunConversion(mval);
+	}
+	
+	private static String sunConversion(short mval) {
+		return String.format("%02d:%02d", (short) Math.floor(mval/100), mval%100);
 	}
 	
 	/**
