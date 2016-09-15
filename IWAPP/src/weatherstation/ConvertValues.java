@@ -73,7 +73,7 @@ public class ConvertValues
 	public static double uvIndex(short mval)
 	{
 		double uv;
-		uv = mval/10;
+		uv = mval/10.0;
 		return uv;
 	}
 	
