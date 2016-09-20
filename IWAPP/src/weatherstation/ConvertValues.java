@@ -2,6 +2,9 @@ package weatherstation;
 
 import java.util.Scanner;
 
+import weatherstation.sql.RawMeasurement;
+import weatherstation.sql.WeatherStation;
+
 /**
  * Converts values received from the VP2Pro weather station
  * database to readable values.
@@ -160,5 +163,12 @@ public class ConvertValues
 		
 		System.out.println(output);
 		reader.close();
+		testDatabase();
+	}
+	
+	public static void testDatabase() {
+		WeatherStation station = new WeatherStation();
+		RawMeasurement raw = station.getMostRecentMeasurement();
+		System.out.println(raw.toString());
 	}
 }
