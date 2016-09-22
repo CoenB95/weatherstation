@@ -1,10 +1,5 @@
 package weatherstation;
 
-import java.util.Scanner;
-
-import weatherstation.sql.RawMeasurement;
-import weatherstation.sql.WeatherStation;
-
 /**
  * Converts values received from the VP2Pro weather station
  * database to readable values.
@@ -12,8 +7,7 @@ import weatherstation.sql.WeatherStation;
  * @author CoenB95, Dokugan 
  * @version (a version number or a date)
  */
-public class ConvertValues
-{
+public class ValueConverter {
 	
 	public static final short SNOW = 		0b0001_0000;
 	public static final short SUN = 		0b0000_1000;
@@ -27,7 +21,7 @@ public class ConvertValues
 	* @param mval the value from the database.
 	* @return the amount of air-pressure in mBar.
 	*/
-	public static double airPressure(double mval)
+	public static double convertBarometer(double mval)
 	{
 		double mbar;
 		mbar = mval / 1000 * 3386.38866667;
@@ -114,10 +108,11 @@ public class ConvertValues
 	}
 	
 	/**
-	 * humidity has to be 50%
+	 * Calculates the dew point.
+	 * To work correctly, the humidity has to be at least 50%.
 	 * 
-	 * @param mval1
-	 * @param mval2
+	 * @param mval1 the outside temperature value from the database.
+	 * @param mval2 the outside humidity value from the database.
 	 * @return
 	 */
 	public static double dewpoint(short mval1, short mval2)
@@ -128,6 +123,13 @@ public class ConvertValues
 		return dewp;
 	}
 	
+	/**
+	 * Calculates the wind chill.
+	 * 
+	 * @param mval1 the outside temperature value from the database.
+	 * @param mval2 the windspeed value from the database.
+	 * @return
+	 */
 	public static double windchill(short mval1, short mval2)
 	{
 		double windspd = windSpeed(mval2);
@@ -141,34 +143,21 @@ public class ConvertValues
 		return 0;
 	}
 	
+	/**
+	 * Calculates the heat-index.
+	 * @param mval1 the outside temperature value from the database.
+	 * @param mval2 the humidity.
+	 * @return
+	 */
 	public static double heatindex(short mval1, short mval2)
 	{
 		double temp = mval1/10.0;
-		double heatindex = -42.379 + (2.04901523 * temp) + (10.14333127*mval2) + (-0.22475541 * temp * mval2) + (-0.006873783 * temp * temp) + ( -0.05481717 * mval2*mval2) + ( 0.00122874* temp*temp * mval2 ) + (0.00085282 * temp * mval2*mval2) + ( -0.00000199* temp*temp * mval2*mval2);
+		double heatindex = -42.379 + (2.04901523 * temp) + (10.14333127*mval2) +
+				(-0.22475541 * temp * mval2) + (-0.006873783 * temp * temp) +
+				( -0.05481717 * mval2*mval2) + ( 0.00122874* temp*temp * mval2 ) + 
+				(0.00085282 * temp * mval2*mval2) +
+				( -0.00000199* temp*temp * mval2*mval2);
         heatindex = (heatindex - 32) / 1.8;
         return heatindex;
-	}
-	
-	public static void main(String[] args)
-	{
-		double input;
-		double output;
-		
-		System.out.println("input");
-		
-		Scanner reader = new Scanner(System.in);
-		input = reader.nextInt();
-		
-		output = airPressure(input);
-		
-		System.out.println(output);
-		reader.close();
-		testDatabase();
-	}
-	
-	public static void testDatabase() {
-		WeatherStation station = new WeatherStation();
-		RawMeasurement raw = station.getMostRecentMeasurement();
-		System.out.println(raw.toString());
 	}
 }
