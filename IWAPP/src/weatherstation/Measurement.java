@@ -1,6 +1,6 @@
 package weatherstation;
 
-import java.sql.Timestamp;
+import java.util.Calendar;
 
 import weatherstation.sql.RawMeasurement;
 
@@ -24,8 +24,10 @@ public class Measurement {
 		return ValueConverter.batteryVoltage(rawMeasurement.getBattLevel());
 	}
 	
-	public Timestamp getDateStamp() {
-		return rawMeasurement.getDateStamp();
+	public Calendar getDateStamp() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(rawMeasurement.getDateStamp());
+		return calendar;
 	}
 	
 	public double getDewPoint() {
