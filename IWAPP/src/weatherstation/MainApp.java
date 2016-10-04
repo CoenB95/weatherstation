@@ -1,6 +1,6 @@
 package weatherstation;
 
-import java.util.Scanner;
+//import java.util.Scanner;
 
 import weatherstation.sql.RawMeasurement;
 import weatherstation.sql.WeatherStation;
@@ -9,12 +9,12 @@ public class MainApp {
 
 	public static void main(String[] args)
 	{
-		double input;
-		double output;
+		//double input;
+		//double output;
 		
-		System.out.println("input");
+		//System.out.println("input");
 		
-		Scanner reader = new Scanner(System.in);
+		//Scanner reader = new Scanner(System.in);
 		//input = reader.nextInt();
 		IOHandler handler = new IOHandler();
 		handler.writeNumber((short) 0x10, 246, true);
@@ -25,7 +25,7 @@ public class MainApp {
 		//output = ValueConverter.convertBarometer(input);
 		
 		//System.out.println(output);
-		reader.close();
+		//reader.close();
 		Measurement m = testDatabase();
 		handler.getMatrixHandler().clearMatrix();
 		if (m != null) {
