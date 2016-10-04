@@ -131,6 +131,8 @@ public class IOHandler {
 		public void clearMatrix() {
 			IO.writeShort(0x40, 0xFE);
 			IO.writeShort(0x40, 0x01);
+			row = 0;
+			index = 0;
 		}
 
 		public void clearPixel(int x, int y) {
