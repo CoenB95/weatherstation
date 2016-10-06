@@ -26,13 +26,12 @@ public class MainApp {
 			e.printStackTrace();
 		}
 		
-		IOHandler handler = null;
-		try {
-			handler = new IOHandler();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		IOHandler handler = new IOHandler();
+		MenuHandler hand = new MenuHandler();
+		  
+		String[] x = {"test1", "test2", "test3"};
+		
+		hand.displayMenu(x);
 		
 		//handler.getMatrixHandler().clearPixel(0, 0);
 		//handler.getMatrixHandler().MatrixInvert((short)0, (short)0, (short)0b0, (short)0b0);

@@ -30,4 +30,47 @@ public class MenuHandler {
 		Menu menu = new Menu(values);
 		name = menu;
 	}
+	
+	public void displayMenu(String[] menu)
+	{
+		IOHandler io = new IOHandler();
+		
+		int length = menu.length;
+		int index = 0;
+		
+		for(String j:menu){
+			if(index < 3){
+				io.getMatrixHandler().appendText(j);
+				IO.writeShort(0x40, '\n');
+				index ++;
+			}
+			else{
+				
+			}
+		}
+	}
+	
+	public void selectItem(){
+		int index = 0;
+		
+		boolean input = false;
+		
+		switch (index){
+		case 0:
+		}	 
+		
+			
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
