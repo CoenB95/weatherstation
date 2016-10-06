@@ -2,6 +2,7 @@ package weatherstation;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 
 //import java.util.Scanner;
 
@@ -26,13 +27,16 @@ public class MainApp {
 			e.printStackTrace();
 		}
 		
-		IOHandler handler = null;
-		try {
-			handler = new IOHandler();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// IOHandler: The GUI.
+		IOHandler handler = new IOHandler();
+		
+		// Measurements: The Database Util.
+		// Pass todays date as the period we want data from (as a test).
+		Measurements measurements = new Measurements(LocalDate.now());
+		handler.getMatrixHandler().appendText(
+				String.format("Min: %.1f, Max: %.1f", 
+						measurements.getHighest(Measurement.TEMPERATURE_OUTSIDE).get(0),
+						0.0));
 		
 		//handler.getMatrixHandler().clearPixel(0, 0);
 		//handler.getMatrixHandler().MatrixInvert((short)0, (short)0, (short)0b0, (short)0b0);
