@@ -45,16 +45,16 @@ public class Measurements {
 		List<Double> result = new ArrayList<>();
 		if (measurements.isEmpty()) return result;
 		LocalDateTime date = measurements.get(0).getDateStamp();
-		double max = measurements.get(0).get(field);
+		double max = measurements.get(0).getDouble(field);
 		for (Measurement m:measurements) {
 			if (m.getDateStamp().getDayOfYear() > date.getDayOfYear() ||
 					m.getDateStamp().getDayOfYear() == 0) {
 				date = m.getDateStamp();
 				result.add(max);
-				max = m.get(field);
+				max = m.getDouble(field);
 			}
-			if (m.get(field) > max) 
-				max = m.get(field);
+			if (m.getDouble(field) > max) 
+				max = m.getDouble(field);
 		}
 		result.add(max);
 		return result;
