@@ -8,22 +8,21 @@ public class Measurement {
 
 	public static final int BAROMETER = 1;
 	public static final int BATTERYVOLTAGE = 2;
-	public static final int DATESTAMP = 3;
-	public static final int DEWPOINT = 4;
-	public static final int HEATINDEX = 5;
-	public static final int HUMIDITY_INSIDE = 6;
-	public static final int HUMIDITY_OUTSIDE = 7;
-	public static final int RAINRATE = 8;
-	public static final int SOLARRADIATION = 9;
-	public static final int SUNRISE = 10;
-	public static final int SUNSET = 11;
-	public static final int TEMPERATURE_INSIDE = 12;
-	public static final int TEMPERATURE_OUTSIDE = 13;
-	public static final int UVLEVEL = 14;
-	public static final int WINDCHILL = 15;
-	public static final int WINDDIRECTION = 16;
-	public static final int WINDSPEED = 17;
-	public static final int WINDSPEED_AVERAGE = 18;
+	public static final int DEWPOINT = 3;
+	public static final int HEATINDEX = 4;
+	public static final int HUMIDITY_INSIDE = 5;
+	public static final int HUMIDITY_OUTSIDE = 6;
+	public static final int RAINRATE = 7;
+	public static final int SOLARRADIATION = 8;
+	public static final int SUNRISE = 9;
+	public static final int SUNSET = 10;
+	public static final int TEMPERATURE_INSIDE = 11;
+	public static final int TEMPERATURE_OUTSIDE = 12;
+	public static final int UVLEVEL = 13;
+	public static final int WINDCHILL = 14;
+	public static final int WINDDIRECTION = 15;
+	public static final int WINDSPEED = 16;
+	public static final int WINDSPEED_AVERAGE = 17;
 
 
 	private RawMeasurement rawMeasurement;
@@ -81,6 +80,17 @@ public class Measurement {
 		}
 		else {
 			return -1000;
+		}
+	}
+	public String getString(int field) {
+		if(field == SUNRISE) {
+			return getSunrise();
+		}
+		else if(field == SUNSET) {
+			return getSunset();
+		}
+		else {
+			return "Wrong value entered";
 		}
 	}
 
