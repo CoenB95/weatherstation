@@ -3,6 +3,8 @@ package weatherstation;
 public class IOHandler {
 
 	private MatrixHandler matrixHandler;
+	
+	private static boolean[][] matrixBoard = new boolean[128][32];
 
 	/** Base address of the top number-field (5 digits)*/
 	public static final short NUMBER_FIELD_1 = 0x10;
@@ -16,8 +18,9 @@ public class IOHandler {
 	/** The value to send to a number-fields digit to appear cleared.*/
 	public static final short CLEARED_NUMBER = 0x100;
 
-	public IOHandler() {
+	public IOHandler() {	
 		IO.init();
+		
 		matrixHandler = new MatrixHandler();
 	}
 
@@ -108,6 +111,15 @@ public class IOHandler {
 		private MatrixHandler() {
 			
 		}
+		
+		//inverts the pixels of a specified area on the matrixboard
+		public void MatrixInvert(short ltopx, short ltopy, short rbottomx, short rbottomy)
+		{
+			int length = rbottomx - ltopx;
+			int width = rbottomy - ltopy;
+			
+			//System.out.println(IO.readShort(0x42 | 0x00));
+		}
 
 		public void appendText(String text) {
 			for (char x:text.toCharArray()) {
@@ -133,16 +145,26 @@ public class IOHandler {
 			IO.writeShort(0x40, 0x01);
 			row = 0;
 			index = 0;
+			
+			for (int i = 0; i < 128; i++)
+			{
+				for (int j = 0; j < 32; j++)
+				{
+					matrixBoard[i][j] = false;
+				}
+			}
 		}
 
 		public void clearPixel(int x, int y) {
-			IO.writeShort(0x42, (OFF_CODE << CODE_POS) |
-					(x << X_POS) | (y << Y_POS));
+			IO.writeShort(0x42, (OFF_CODE << CODE_POS) | (x << X_POS) | (y << Y_POS));
+			System.out.println( IO.readShort(0x42 | (OFF_CODE << CODE_POS) | (x << X_POS) | (y << Y_POS)));
+			matrixBoard[x][y] = false;
 		}
 
 		public void drawPixel(int x, int y) {
-			IO.writeShort(0x42, (ON_CODE << CODE_POS) |
-					(x << X_POS) | (y << Y_POS));
+			IO.writeShort(0x42, (ON_CODE << CODE_POS) | (x << X_POS) | (y << Y_POS));
+			System.out.println( IO.readShort(0x42 | (OFF_CODE << CODE_POS) | (x << X_POS) | (y << Y_POS)));
+			matrixBoard[x][y] = true;
 		}
 
 		public void drawLine(int x1, int y1, int x2, int y2) {

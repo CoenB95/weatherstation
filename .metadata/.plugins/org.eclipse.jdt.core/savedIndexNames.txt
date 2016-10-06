@@ -1,0 +1,21 @@
+INDEX VERSION 1.129+C:\Users\nards\Documents\School\Jaar-1\Periode-1\weatherstation\.metadata\.plugins\org.eclipse.jdt.core
+3659163755.index
+277330968.index
+1384569773.index
+1768317025.index
+798836303.index
+2131649118.index
+3060984396.index
+460464283.index
+4206875510.index
+2644360905.index
+2556109322.index
+2097543236.index
+779407479.index
+2247402208.index
+2352543979.index
+450602042.index
+1818873502.index
+288336778.index
+2254461003.index
+3498770828.index
