@@ -33,6 +33,7 @@ public class Measurements {
 			measurements.add(new Measurement(rm));
 		}
 	}
+
 	
 	/**
 	 * Returns the max bv temperature of each day in the period.
@@ -43,14 +44,14 @@ public class Measurements {
 		List<Double> result = new ArrayList<>();
 		if (measurements.isEmpty()) return result;
 		LocalDateTime date = measurements.get(0).getDateStamp();
-		double max = 0;//measurements.get(0).get(field);
+		double max = 0;measurements.get(0).get(field);
 		for (Measurement m:measurements) {
 			if (m.getDateStamp().getDayOfYear() > date.getDayOfYear() ||
 					m.getDateStamp().getDayOfYear() == 0) {
 				result.add(max);
 			}
-			//if (m.get(field) > max) 
-			//	max = m.get(field);
+			if (m.get(field) > max) 
+				max = m.get(field);
 		}
 		return result;
 	}
