@@ -3,7 +3,6 @@ package weatherstation;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import weatherstation.sql.RawMeasurement;
@@ -16,6 +15,7 @@ public class Measurements {
 	
 	public Measurements() {
 		station = new WeatherStation();
+		measurements = new ArrayList<>();
 	}
 	
 	public Measurements(LocalDate d) {
@@ -24,6 +24,7 @@ public class Measurements {
 	
 	public Measurements(LocalDate d1, LocalDate d2) {
 		station = new WeatherStation();
+		measurements = new ArrayList<>();
 		setPeriod(d1, d2);
 	}
 	
@@ -44,15 +45,18 @@ public class Measurements {
 		List<Double> result = new ArrayList<>();
 		if (measurements.isEmpty()) return result;
 		LocalDateTime date = measurements.get(0).getDateStamp();
-		double max = 0;measurements.get(0).get(field);
+		double max = measurements.get(0).get(field);
 		for (Measurement m:measurements) {
 			if (m.getDateStamp().getDayOfYear() > date.getDayOfYear() ||
 					m.getDateStamp().getDayOfYear() == 0) {
+				date = m.getDateStamp();
 				result.add(max);
+				max = m.get(field);
 			}
 			if (m.get(field) > max) 
 				max = m.get(field);
 		}
+		result.add(max);
 		return result;
 	}
 }
