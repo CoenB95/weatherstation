@@ -1,5 +1,8 @@
 package weatherstation;
 
-public class MenuOpties {
-
+public class MenuOpties 
+{
+	private String allData, airPressure, Temperature;
+	
+	
 }
