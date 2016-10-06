@@ -9,6 +9,8 @@ public class MenuHandler {
 	private String[] chosen = new String[3];
 	int chosenIndex = 0;
 	
+	
+	
 	public MenuHandler() 
 	{
 		io = new IOHandler();
@@ -33,7 +35,7 @@ public class MenuHandler {
 	
 	public void displayMenu(String[] menu)
 	{
-		IOHandler io = new IOHandler();
+
 		
 		int length = menu.length;
 		int index = 0;
@@ -57,6 +59,7 @@ public class MenuHandler {
 		
 		switch (index){
 		case 0:
+			
 		}	 
 		
 			

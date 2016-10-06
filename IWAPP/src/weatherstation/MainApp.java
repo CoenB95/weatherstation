@@ -34,21 +34,21 @@ public class MainApp {
 		hand.displayMenu(x);
 		
 		// IOHandler: The GUI.
-		IOHandler handler = new IOHandler();
-		handler.getMatrixHandler().clearMatrix();
-		handler.getMatrixHandler().appendText("Een ogenblik geduld...");
-		
+//		IOHandler handler = new IOHandler();
+//		handler.getMatrixHandler().clearMatrix();
+//		handler.getMatrixHandler().appendText("Een ogenblik geduld...");
+//		
 		// Measurements: The Database Util.
 		// Pass todays date as the period we want data from (as a test).
-		Measurements measurements = new Measurements(LocalDate.now());
+//		Measurements measurements = new Measurements(LocalDate.now());
 		
 		// The previous instruction blockes the main thread until the data has
 		// been collected. Now display some useful information ;)
-		handler.getMatrixHandler().clearMatrix();
-		handler.getMatrixHandler().appendText(
-				String.format("Tot nu toe:\nMin: %.1f|Max: %.1f", 
-						measurements.getLowest(Measurement.TEMPERATURE_OUTSIDE).get(0),
-						measurements.getHighest(Measurement.TEMPERATURE_OUTSIDE).get(0)));
+//		handler.getMatrixHandler().clearMatrix();
+//		handler.getMatrixHandler().appendText(
+//				String.format("Tot nu toe:\nMin: %.1f|Max: %.1f", 
+//						measurements.getLowest(Measurement.TEMPERATURE_OUTSIDE).get(0),
+//						measurements.getHighest(Measurement.TEMPERATURE_OUTSIDE).get(0)));
 	}
 	
 	public static Measurement testDatabase() {
