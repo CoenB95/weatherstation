@@ -20,7 +20,7 @@ public class MainApp {
 //		handler.writeNumber((short) 0x10, 246, true);
 //		handler.clearNumbers(0x10, 5);
 //		handler.getMatrixHandler().clearMatrix();
-//		handler.getMatrixHandler().appendText("Laden...") ;
+//		handler.getMatrixHandler().appendText("Laden...");
 //		
 //		output = ValueConverter.convertBarometer(input);
 //		
