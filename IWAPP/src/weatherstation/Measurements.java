@@ -13,6 +13,9 @@ public class Measurements {
 	private WeatherStation station;
 	private List<Measurement> measurements;
 	
+	/**
+	 * @deprecated A period should be set from the beginning.
+	 */
 	public Measurements() {
 		station = new WeatherStation();
 		measurements = new ArrayList<>();
@@ -60,7 +63,7 @@ public class Measurements {
 		return result;
 	}
 	
-	public List<Double> getlowest(int field) {
+	public List<Double> getLowest(int field) {
 		List<Double> result = new ArrayList<>();
 		if (measurements.isEmpty()) return result;
 		LocalDateTime date = measurements.get(0).getDateStamp();
