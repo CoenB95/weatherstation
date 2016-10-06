@@ -18,8 +18,6 @@ public class MainApp {
 		
 		absolutePath = absolutePath.replaceAll("\\u005c", "/");
 		System.out.println(absolutePath);
-
-		
 		
 		try {
 			Runtime.getRuntime().exec("javaw -jar " + absolutePath);
@@ -36,8 +34,8 @@ public class MainApp {
 			e.printStackTrace();
 		}
 		
-		handler.getMatrixHandler().clearPixel(0, 0);
-		handler.getMatrixHandler().MatrixInvert((short)0, (short)0, (short)0b0, (short)0b0);
+		//handler.getMatrixHandler().clearPixel(0, 0);
+		//handler.getMatrixHandler().MatrixInvert((short)0, (short)0, (short)0b0, (short)0b0);
 	}
 	
 	public static Measurement testDatabase() {
