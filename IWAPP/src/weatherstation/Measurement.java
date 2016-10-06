@@ -6,22 +6,78 @@ import weatherstation.sql.RawMeasurement;
 
 public class Measurement {
 
-	public static final int OUTSIDE_TEMPERATURE = 1;
-	public static final int OUTSIDE_HUMIDITY = 2;
+	public static final int BAROMETER = 1;
+	public static final int BATTERYVOLTAGE = 2;
+	public static final int DATESTAMP = 3;
+	public static final int DEWPOINT = 4;
+	public static final int HEATINDEX = 5;
+	public static final int HUMIDITY_INSIDE = 6;
+	public static final int HUMIDITY_OUTSIDE = 7;
+	public static final int RAINRATE = 8;
+	public static final int SOLARRADIATION = 9;
+	public static final int SUNRISE = 10;
+	public static final int SUNSET = 11;
+	public static final int TEMPERATURE_INSIDE = 12;
+	public static final int TEMPERATURE_OUTSIDE = 13;
+	public static final int UVLEVEL = 14;
+	public static final int WINDCHILL = 15;
+	public static final int WINDDIRECTION = 16;
+	public static final int WINDSPEED = 17;
+	public static final int WINDSPEED_AVERAGE = 18;
 
-			private RawMeasurement rawMeasurement;
+
+	private RawMeasurement rawMeasurement;
 
 	public Measurement(RawMeasurement rawMeasurement) {
 		this.rawMeasurement = rawMeasurement;
 	}
 
-	public double get(int field) {
+	public double getDouble(int field) {
 
-		if(field == OUTSIDE_TEMPERATURE) {
+		if(field == BAROMETER) {
+			return getBarometer();
+		}
+		else if(field == BATTERYVOLTAGE) {
+			return getBatteryVoltage();
+		}
+		else if(field == DEWPOINT) {
+			return getDewPoint();
+		}
+		else if( field == HEATINDEX) {
+			return getHeatIndex();
+		}
+		else if(field == HUMIDITY_INSIDE) {
+			return getInsideHumidity();
+		}
+		else if(field == HUMIDITY_OUTSIDE) {
+			return getOutsideHumidity();
+		}
+		else if(field == RAINRATE) {
+			return getRainRate();
+		}
+		else if(field == SOLARRADIATION) {
+			return getSolarRadiation();
+		}
+		else if(field == TEMPERATURE_INSIDE) {
+			return getInsideTemperature();
+		}
+		else if(field == TEMPERATURE_OUTSIDE) {
 			return getOutsideTemperature();
 		}
-		else if(field == OUTSIDE_HUMIDITY) {
-			return getOutsideHumidity();
+		else if(field == UVLEVEL) {
+			return getUVLevel();
+		}
+		else if(field == WINDCHILL) {
+			return getWindChill();
+		}
+		else if(field == WINDDIRECTION) {
+			return getWindDirection();
+		}
+		else if(field == WINDSPEED) {
+			return getWindSpeed();
+		}
+		else if(field == WINDSPEED_AVERAGE) {
+			return getAverageWindSpeed();
 		}
 		else {
 			return -1000;
