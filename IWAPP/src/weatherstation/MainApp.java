@@ -1,5 +1,7 @@
 package weatherstation;
 
+import java.time.LocalDate;
+
 //import java.util.Scanner;
 
 import weatherstation.sql.RawMeasurement;
@@ -36,6 +38,7 @@ public class MainApp {
 //		} else {
 //			handler.getMatrixHandler().appendText("Geen verbinding.");
 //		}
+//	System.out.println(new Measurements(LocalDate.now()).getlowest(Measurement.OUTSIDE_TEMPERATURE));
 	}
 	
 	public static Measurement testDatabase() {

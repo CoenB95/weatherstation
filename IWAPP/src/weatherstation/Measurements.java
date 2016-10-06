@@ -59,4 +59,23 @@ public class Measurements {
 		result.add(max);
 		return result;
 	}
+	
+	public List<Double> getlowest(int field) {
+		List<Double> result = new ArrayList<>();
+		if (measurements.isEmpty()) return result;
+		LocalDateTime date = measurements.get(0).getDateStamp();
+		double min = measurements.get(0).get(field);
+		for (Measurement m:measurements) {
+			if (m.getDateStamp().getDayOfYear() > date.getDayOfYear() ||
+					m.getDateStamp().getDayOfYear() == 0) {
+				date = m.getDateStamp();
+				result.add(min);
+				min = m.get(field);
+			}
+			if (m.get(field) < min) 
+				min = m.get(field);
+		}
+		result.add(min);
+		return result;
+	}
 }
