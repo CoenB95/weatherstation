@@ -134,34 +134,19 @@ public class Measurements {
 	}
 
 	/**
-	 * Returns the longest period with a rainrate of 0.
+	 * Returns the longest period with a certain maximum rainrate.
 	 * @return
 	 */
 
-	public List<Period> getLongestPeriodWithoutRainfall() {
-		//		LocalDateTime perWithoutRain = measurements.get(0).getDateStamp();
-		//		List<LocalDateTime> result = new ArrayList<>();
-		//		if (measurements.isEmpty()) return result;
-		//		LocalDateTime date = measurements.get(0).getDateStamp();
-		//		for (Measurement m:measurements) {
-		//			if (m.getDateStamp().getDayOfYear() > date.getDayOfYear() ||
-		//					m.getDateStamp().getDayOfYear() == 0) {
-		//				date = m.getDateStamp();
-		//				if (m.getDouble(Measurement.RAINRATE) == 0) {
-		//					perWithoutRain = date;
-		//					result.add(perWithoutRain);
-		//				}
-		//			}
-		//		}
-		//		return result;
+	public List<Period> getLongestPeriodWithLessRainfallThan(double maxRainfall) {
 		List<Period> periods = new ArrayList<>();
 		if (measurements.isEmpty()) return periods;
 		LocalDateTime start = null;
 		for (Measurement m:measurements) {
 			if (start == null) {
-				if (m.getRainRate() <= 0) start = m.getDateStamp();
+				if (m.getRainRate() <= maxRainfall) start = m.getDateStamp();
 			} else {
-				if (m.getRainRate() > 0) {
+				if (m.getRainRate() > maxRainfall) {
 					periods.add(new Period(start, m.getDateStamp()));
 					start = null;
 				}
@@ -170,6 +155,7 @@ public class Measurements {
 		if (start != null) {
 			periods.add(new Period(start, measurements.get(measurements.size() -1).getDateStamp()));
 		}
+		
 		return periods;
 	}
 
