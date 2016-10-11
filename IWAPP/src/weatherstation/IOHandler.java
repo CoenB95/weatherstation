@@ -1,8 +1,27 @@
 package weatherstation;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * The IOHandler handles communication between your program
+ * and the WSDisplay. This is a wrapper around the basic IO
+ * class with some utility methods to ease everyday tasks.<p/>
+ * In contrast to the IO class, this handler requires an object to be created.
+ * This is to prevent multiple unneeded initializations.
+ * @see IO
+ * @author CoenB95, Dokugan
+ * @version 1.0
+ */
 public class IOHandler {
 
 	private MatrixHandler matrixHandler;
+	
+	private ButtonHandler buttonListener;
+	private boolean left_on;
+	private boolean right_on;
+	private boolean select_on;
 	
 	private static boolean[][] matrixBoard = new boolean[128][32];
 
@@ -18,36 +37,98 @@ public class IOHandler {
 	/** The value to send to a number-fields digit to appear cleared.*/
 	public static final short CLEARED_NUMBER = 0x100;
 
+	/** Creates a new {@link IOHandler}*/
 	public IOHandler() {	
 		IO.init();
 		
 		matrixHandler = new MatrixHandler();
+		setupButtonHandler();
 	}
 
+	/**
+	 * Clears the number digit at the specified address.
+	 * @param address the address of the digit on the WeatherStation.
+	 */
 	public void clearNumber(int address) {
 		IO.writeShort(address, 0x100);
 	}
 
+	/**
+	 * Clears multiple number digits of the display, starting on the base-address.
+	 * @param address the base-address of the digits on the WeatherStation.
+	 * @param span the number of digits that should be cleared.
+	 */
 	public void clearNumbers(int address, int span) {
 		for (int s = 0;s < span;s++) {
 			clearNumber(address + (s*2));
 		}
 	}
 
+	public void setOnButtonListener(ButtonHandler b) {
+		buttonListener = b;
+	}
+	
+	/**
+	 * Turns on a specific segment of a digit.
+	 * @param address address of the digit on the WeatherStation.
+	 * @param segment the segment number.
+	 */
 	public void setSegment(int address, int segment) {
 		IO.writeShort(address, IO.readShort(address) | (0x100 | (1 << segment)));
 	}
 
+	/**
+	 * Turns on specific segments of a digit.
+	 * @param base_address address of the digit on the WeatherStation.
+	 * @param segment the base segment number.
+	 * @param span the number of segments.
+	 */
 	public void setSegments(int base_address, int segment, int span) {
 		for (int s = 0;s < span;s++) {
 			setSegment(base_address + (s*2), segment);
 		}
 	}
 
+	private void setupButtonHandler() {
+		ScheduledExecutorService service = 
+				Executors.newSingleThreadScheduledExecutor();
+		service.scheduleAtFixedRate(() -> {
+			if (buttonListener == null) return;
+			if (IO.readShort(ButtonHandler.BUTTON_LEFT) >= 1) {
+				if (!left_on) {
+					left_on = true;
+					buttonListener.onButtonClicked(ButtonHandler.BUTTON_LEFT);
+				}
+			} else left_on = false;
+			if (IO.readShort(ButtonHandler.BUTTON_RIGHT) >= 1) {
+				if (!right_on) {
+					right_on = true;
+					buttonListener.onButtonClicked(ButtonHandler.BUTTON_RIGHT);
+				}
+			} else right_on = false;
+			if (IO.readShort(ButtonHandler.BUTTON_SELECT) >= 1) {
+				if (!select_on) {
+					select_on = true;
+					buttonListener.onButtonClicked(ButtonHandler.BUTTON_SELECT);
+				}
+			} else select_on = false;
+		}, 500, 50, TimeUnit.MILLISECONDS);
+	}
+	/**
+	 * Turns off a specific segment of a digit.
+	 * @param address address of the digit on the WeatherStation.
+	 * @param segment the segment number.
+	 */
 	public void clearSegment(int address, int segment) {
 		IO.writeShort(address, IO.readShort(address) & ~(1 << segment));
 	}
 
+	/**
+	 * Turns off specific segments of a digit.
+	 * @param base_address address of the digit on the WeatherStation.
+	 * @param segment the base segment number.
+	 * @param span the number of segments.
+	 */
 	public void clearSegments(int base_address, int segment, int span) {
 		for (int s = 0;s < span;s++) {
 			clearSegment(base_address + (s*2), segment);
@@ -182,5 +263,14 @@ public class IOHandler {
 			IO.writeShort(0x42, (SHIFT_CODE << CODE_POS) |
 					(-x << X_POS) | (-y << Y_POS));
 		}
+	}
+	
+	@FunctionalInterface
+	public interface ButtonHandler {
+		public static final int BUTTON_LEFT = 0x90;
+		public static final int BUTTON_RIGHT = 0x100;
+		public static final int BUTTON_SELECT = 0x80;
+		
+		void onButtonClicked(int button);
 	}
 }

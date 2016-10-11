@@ -9,6 +9,8 @@ public class MenuHandler {
 	private String[] chosen = new String[3];
 	int chosenIndex = 0;
 	
+	
+	
 	public MenuHandler() 
 	{
 		io = new IOHandler();
@@ -29,5 +31,37 @@ public class MenuHandler {
 	{
 		Menu menu = new Menu(values);
 		name = menu;
+	}
+	
+	public void displayMenu(String[] menu)
+	{
+
+		
+		int length = menu.length;
+		int index = 0;
+		
+		for(String j:menu){
+			if(index < 3){
+				io.getMatrixHandler().appendText(j);
+				IO.writeShort(0x40, '\n');
+				index ++;
+			}
+			else{
+				
+			}
+		}
+	}
+	
+	public void selectItem(){
+		int index = 0;
+		
+		boolean input = false;
+		
+		switch (index){
+		case 0:
+			
+		}	 
+		
+			
 	}
 }
