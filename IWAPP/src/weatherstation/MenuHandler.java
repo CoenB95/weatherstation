@@ -30,4 +30,9 @@ public class MenuHandler {
 		Menu menu = new Menu(values);
 		name = menu;
 	}
+	
+	public void selectItem()
+	{
+		
+	}
 }

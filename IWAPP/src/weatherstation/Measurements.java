@@ -112,4 +112,26 @@ public class Measurements {
 		result.add(avg);
 		return result;
 	}
+	
+	public double getStandardDeviation(int field){
+		double total = 0;
+		double avg = 0;
+		double vari = 0;
+		double devtot = 0;
+		int i = 0;
+		
+		for (Measurement m:measurements){
+			total += m.getDouble(field);
+			i++;
+		}
+		avg = total / i;
+		
+		for (Measurement n : measurements){
+			devtot += Math.pow((n.getDouble(field) - avg), 2);
+		}
+		vari = devtot / i;
+		
+		return Math.sqrt(vari);
+		//return Math.sqrt(vari);
+	}
 }
