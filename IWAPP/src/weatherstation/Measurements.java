@@ -101,7 +101,7 @@ public class Measurements {
 		result.add(min);
 		return result;
 	}
-	
+
 	/**
 	 *  This method calculates the average of the values specified in the MainApp.
 	 *  It requests a List from the MainApp with values depending on the field variable.
@@ -137,43 +137,60 @@ public class Measurements {
 	 * Returns the longest period with a rainrate of 0.
 	 * @return
 	 */
-	
-	public List<LocalDateTime> getLongestPeriodWithoutRainfall() {
-		LocalDateTime perWithoutRain = measurements.get(0).getDateStamp();
-		List<LocalDateTime> result = new ArrayList<>();
-		if (measurements.isEmpty()) return result;
-		LocalDateTime date = measurements.get(0).getDateStamp();
+
+	public List<Period> getLongestPeriodWithoutRainfall() {
+		//		LocalDateTime perWithoutRain = measurements.get(0).getDateStamp();
+		//		List<LocalDateTime> result = new ArrayList<>();
+		//		if (measurements.isEmpty()) return result;
+		//		LocalDateTime date = measurements.get(0).getDateStamp();
+		//		for (Measurement m:measurements) {
+		//			if (m.getDateStamp().getDayOfYear() > date.getDayOfYear() ||
+		//					m.getDateStamp().getDayOfYear() == 0) {
+		//				date = m.getDateStamp();
+		//				if (m.getDouble(Measurement.RAINRATE) == 0) {
+		//					perWithoutRain = date;
+		//					result.add(perWithoutRain);
+		//				}
+		//			}
+		//		}
+		//		return result;
+		List<Period> periods = new ArrayList<>();
+		if (measurements.isEmpty()) return periods;
+		LocalDateTime start = null;
 		for (Measurement m:measurements) {
-			if (m.getDateStamp().getDayOfYear() > date.getDayOfYear() ||
-					m.getDateStamp().getDayOfYear() == 0) {
-				date = m.getDateStamp();
-				if (m.getDouble(Measurement.RAINRATE) == 0) {
-					perWithoutRain = date;
-					result.add(perWithoutRain);
+			if (start == null) {
+				if (m.getRainRate() <= 0) start = m.getDateStamp();
+			} else {
+				if (m.getRainRate() > 0) {
+					periods.add(new Period(start, m.getDateStamp()));
+					start = null;
 				}
 			}
 		}
-		return result;
+		if (start != null) {
+			periods.add(new Period(start, measurements.get(measurements.size() -1).getDateStamp()));
+		}
+		return periods;
 	}
-	
+
 	public double getStandardDeviation(int field){
 		double total = 0;
 		double avg = 0;
 		double vari = 0;
 		double devtot = 0;
 		int i = 0;
-		
+
 		for (Measurement m:measurements){
 			total += m.getDouble(field);
 			i++;
 		}
 		avg = total / i;
-		
+
 		for (Measurement n : measurements){
 			devtot += Math.pow((n.getDouble(field) - avg), 2);
 		}
 		vari = devtot / i;
-		
+
 		return Math.sqrt(vari);
 		//return Math.sqrt(vari);
 	}
