@@ -11,7 +11,10 @@ import weatherstation.sql.WeatherStation;
 public class Measurements {
 
 	private WeatherStation station;
+	/**Contains all the measurements of the current period*/
 	private List<Measurement> measurements;
+	/**Contains all the measurements of the current period, split on a daily bases.*/
+	private List<List<Measurement>> measurementsPerDay;
 
 	/**
 	 * @deprecated A period should be set from the beginning.
@@ -36,8 +39,31 @@ public class Measurements {
 		for (RawMeasurement rm : station.getAllMeasurementsBetween(d1, d2)) {
 			measurements.add(new Measurement(rm));
 		}
+		splitMeasurementsPerDay();
 	}
 
+	/**
+	 * Splits all measurements up into multiple lists, containing the
+	 * measurements of a single date.
+	 * @return lists containing measurements. The amount of lists depends
+	 * on the total of days.
+	 */
+	private void splitMeasurementsPerDay() {
+		measurementsPerDay = new ArrayList<>();
+		if (measurements.isEmpty()) return;
+		LocalDateTime date = measurements.get(0).getDateStamp();
+		List<Measurement> measurements_of_the_day = new ArrayList<>();
+		for (Measurement m:measurements) {
+			if (m.getDateStamp().getDayOfYear() > date.getDayOfYear() ||
+					m.getDateStamp().getDayOfYear() == 0) {
+				date = m.getDateStamp();
+				measurementsPerDay.add(new ArrayList<>(measurements_of_the_day));
+				measurements_of_the_day.clear();
+			}
+			measurements_of_the_day.add(m);
+		}
+		measurementsPerDay.add(new ArrayList<>(measurements_of_the_day));
+	}
 
 	/**
 	 * Returns the max bv temperature of each day in the period.
@@ -46,20 +72,14 @@ public class Measurements {
 	 */
 	public List<Double> getHighest(int field) {
 		List<Double> result = new ArrayList<>();
-		if (measurements.isEmpty()) return result;
-		LocalDateTime date = measurements.get(0).getDateStamp();
-		double max = measurements.get(0).getDouble(field);
-		for (Measurement m:measurements) {
-			if (m.getDateStamp().getDayOfYear() > date.getDayOfYear() ||
-					m.getDateStamp().getDayOfYear() == 0) {
-				date = m.getDateStamp();
-				result.add(max);
-				max = m.getDouble(field);
+		for (List<Measurement> ms:measurementsPerDay) {
+			if (ms.isEmpty()) break;
+			double max = ms.get(0).getDouble(field);
+			for (Measurement m:ms) {
+				if (m.getDouble(field) > max) max = m.getDouble(field);
 			}
-			if (m.getDouble(field) > max) 
-				max = m.getDouble(field);
+			result.add(max);
 		}
-		result.add(max);
 		return result;
 	}
 
