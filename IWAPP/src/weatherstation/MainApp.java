@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 
+import weatherstation.IOHandler.ButtonHandler;
+
 //import java.util.Scanner;
 
 import weatherstation.sql.RawMeasurement;
@@ -29,6 +31,16 @@ public class MainApp {
 		
 		// IOHandler: The GUI.
 		IOHandler handler = new IOHandler();
+		handler.setOnButtonListener((button) -> {
+			switch (button) {
+			case ButtonHandler.BUTTON_LEFT:
+				System.out.println("Links!");
+				break;
+
+			default:
+				break;
+			}
+		});
 		handler.getMatrixHandler().clearMatrix();
 		handler.getMatrixHandler().appendText("Een ogenblik geduld...");
 		
