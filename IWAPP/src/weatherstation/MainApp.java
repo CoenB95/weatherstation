@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 
+import weatherstation.IOHandler.ButtonHandler;
+
 //import java.util.Scanner;
 
 import weatherstation.sql.RawMeasurement;
@@ -28,16 +30,30 @@ public class MainApp {
 			e.printStackTrace();
 		}
 		
+		MenuHandler hand = new MenuHandler();
+
+		String[] x = {"test1", "test2", "test3"};
+
+		hand.displayMenu(x);
+		
 		// IOHandler: The GUI.
 		IOHandler handler = new IOHandler();
+		handler.setOnButtonListener((button) -> {
+			switch (button) {
+			case ButtonHandler.BUTTON_LEFT:
+				System.out.println("Links!");
+				break;
+
+			default:
+				break;
+			}
+		});
 		handler.getMatrixHandler().clearMatrix();
 		handler.getMatrixHandler().appendText("Een ogenblik geduld...");
 		
 		// Measurements: The Database Util.
 		// Pass todays date as the period we want data from (as a test).
-		Measurements measurements = new Measurements(LocalDate.of(2016, 9, 20), LocalDate.now());
-		
-		System.out.println(measurements.getStandardDeviation(12));
+		Measurements measurements = new Measurements(LocalDate.now().minusDays(1), LocalDate.now());
 		
 		// The previous instruction blockes the main thread until the data has
 		// been collected. Now display some useful information ;)
