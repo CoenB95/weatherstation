@@ -33,7 +33,7 @@ public class MainApp {
 
 		hand.displayMenu(x);
 		
-		// IOHandler: The GUI.
+//		IOHandler: The GUI.
 //		IOHandler handler = new IOHandler();
 //		handler.getMatrixHandler().clearMatrix();
 //		handler.getMatrixHandler().appendText("Een ogenblik geduld...");
