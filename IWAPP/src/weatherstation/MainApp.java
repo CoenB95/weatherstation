@@ -41,7 +41,7 @@ public class MainApp {
 		handler.getMatrixHandler().clearMatrix();
 		handler.getMatrixHandler().appendText(
 				String.format("Tot nu toe:\nMin: %.1f|Max: %.1f", 
-						measurements.getLowest(Measurement.TEMPERATURE_OUTSIDE).get(0),
+						measurements.getLongestPeriodWithoutRainfall(), //.stream().findFirst().orElse(),
 						measurements.getHighest(Measurement.TEMPERATURE_OUTSIDE).get(0)));
 	}
 	

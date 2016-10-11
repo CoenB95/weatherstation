@@ -112,4 +112,26 @@ public class Measurements {
 		result.add(avg);
 		return result;
 	}
+	/**
+	 * Returns the longest period with a rainrate of 0.
+	 * @return
+	 */
+	
+	public List<LocalDateTime> getLongestPeriodWithoutRainfall() {
+		LocalDateTime perWithoutRain = measurements.get(0).getDateStamp();
+		List<LocalDateTime> result = new ArrayList<>();
+		if (measurements.isEmpty()) return result;
+		LocalDateTime date = measurements.get(0).getDateStamp();
+		for (Measurement m:measurements) {
+			if (m.getDateStamp().getDayOfYear() > date.getDayOfYear() ||
+					m.getDateStamp().getDayOfYear() == 0) {
+				date = m.getDateStamp();
+				if (m.getDouble(Measurement.RAINRATE) == 0) {
+					perWithoutRain = date;
+					result.add(perWithoutRain);
+				}
+			}
+		}
+		return result;
+	}
 }
