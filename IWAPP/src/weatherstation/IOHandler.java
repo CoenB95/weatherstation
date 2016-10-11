@@ -17,7 +17,11 @@ import java.util.concurrent.TimeUnit;
 public class IOHandler {
 
 	private MatrixHandler matrixHandler;
+	
 	private ButtonHandler buttonListener;
+	private boolean left_on;
+	private boolean right_on;
+	private boolean select_on;
 	
 	private static boolean[][] matrixBoard = new boolean[128][32];
 
@@ -90,13 +94,25 @@ public class IOHandler {
 				Executors.newSingleThreadScheduledExecutor();
 		service.scheduleAtFixedRate(() -> {
 			if (buttonListener == null) return;
-			if (IO.readShort(ButtonHandler.BUTTON_LEFT) >= 1)
-				buttonListener.onButtonClicked(ButtonHandler.BUTTON_LEFT);
-			if (IO.readShort(ButtonHandler.BUTTON_RIGHT) >= 1)
-				buttonListener.onButtonClicked(ButtonHandler.BUTTON_RIGHT);
-			if (IO.readShort(ButtonHandler.BUTTON_SELECT) >= 1)
-				buttonListener.onButtonClicked(ButtonHandler.BUTTON_SELECT);
-		}, 500, 500, TimeUnit.MILLISECONDS);
+			if (IO.readShort(ButtonHandler.BUTTON_LEFT) >= 1) {
+				if (!left_on) {
+					left_on = true;
+					buttonListener.onButtonClicked(ButtonHandler.BUTTON_LEFT);
+				}
+			} else left_on = false;
+			if (IO.readShort(ButtonHandler.BUTTON_RIGHT) >= 1) {
+				if (!right_on) {
+					right_on = true;
+					buttonListener.onButtonClicked(ButtonHandler.BUTTON_RIGHT);
+				}
+			} else right_on = false;
+			if (IO.readShort(ButtonHandler.BUTTON_SELECT) >= 1) {
+				if (!select_on) {
+					select_on = true;
+					buttonListener.onButtonClicked(ButtonHandler.BUTTON_SELECT);
+				}
+			} else select_on = false;
+		}, 500, 50, TimeUnit.MILLISECONDS);
 	}
 	/**
 	 * Turns off a specific segment of a digit.
