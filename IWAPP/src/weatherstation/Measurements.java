@@ -2,6 +2,7 @@ package weatherstation;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,14 +16,6 @@ public class Measurements {
 	private List<Measurement> measurements;
 	/**Contains all the measurements of the current period, split on a daily bases.*/
 	private List<List<Measurement>> measurementsPerDay;
-
-	/**
-	 * @deprecated A period should be set from the beginning.
-	 */
-	public Measurements() {
-		station = new WeatherStation();
-		measurements = new ArrayList<>();
-	}
 
 	public Measurements(LocalDate d) {
 		this(d, d);
@@ -138,25 +131,37 @@ public class Measurements {
 	 * @return
 	 */
 
-	public List<Period> getLongestPeriodWithLessRainfallThan(double maxRainfall) {
-		List<Period> periods = new ArrayList<>();
-		if (measurements.isEmpty()) return periods;
+	public Period getLongestPeriodWithLessRainfallThan(double maxRainfall) {
+		Period period = new Period(LocalDateTime.now(), LocalDateTime.now());
+		if (measurements.isEmpty()) return null;
 		LocalDateTime start = null;
 		for (Measurement m:measurements) {
 			if (start == null) {
 				if (m.getRainRate() <= maxRainfall) start = m.getDateStamp();
 			} else {
 				if (m.getRainRate() > maxRainfall) {
-					periods.add(new Period(start, m.getDateStamp()));
+					
+					if (ChronoUnit.MINUTES.between(start, m.getDateStamp()) > 
+					ChronoUnit.MINUTES.between(period.getStartDate(), 
+							period.getEndDate())) {
+						
+						period = new Period(start, m.getDateStamp());
+					}
 					start = null;
 				}
 			}
 		}
 		if (start != null) {
-			periods.add(new Period(start, measurements.get(measurements.size() -1).getDateStamp()));
+			Measurement m = measurements.get(measurements.size()-1);
+			if (ChronoUnit.MINUTES.between(start, m.getDateStamp()) > 
+			ChronoUnit.MINUTES.between(period.getStartDate(), 
+					period.getEndDate())) {
+				
+				period = new Period(start, m.getDateStamp());
+			}
 		}
 		
-		return periods;
+		return period;
 	}
 
 	public double getStandardDeviation(int field){

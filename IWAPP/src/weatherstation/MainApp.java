@@ -25,8 +25,8 @@ public class MainApp {
 		
 		// The previous instruction blocks the main thread until the data has
 		// been collected. Now display some useful information ;)
-		List<Period> p = measurements.getLongestPeriodWithoutRainfall();
-		if (p.isEmpty()) {
+		Period p = measurements.getLongestPeriodWithLessRainfallThan(0);
+		if (p == null) {
 			hand.io.getMatrixHandler().clearMatrix();
 			hand.io.getMatrixHandler().appendText("Geen data.");
 		} else {
@@ -34,8 +34,8 @@ public class MainApp {
 			hand.io.getMatrixHandler().appendText("Droogte:\n" + 
 					String.format("Van: %1$td-%1$tm %1$tH:%1$tM:%1$tS\n"
 							+ "Tot: %2$td-%2$tm %2$tH:%2$tM:%2$tS",
-							p.get(0).getStartDate(),
-							p.get(0).getEndDate()));
+							p.getStartDate(),
+							p.getEndDate()));
 		}
 	}
 	
