@@ -3,20 +3,68 @@ package weatherstation;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.List;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import weatherstation.IOHandler.ButtonHandler;
+import weatherstation.menu.fallback.Menu;
+import weatherstation.menu.fallback.MenuItem;
 import weatherstation.sql.RawMeasurement;
 import weatherstation.sql.WeatherStation;
 
 public class MainApp {
-
+	
 	public static void main(String[] args) {
+		
+		BooleanProperty in_menu = new SimpleBooleanProperty(true);
 		
 		setupConnectionWithDisplay();
 		
-		MenuHandler hand = new MenuHandler();
-		hand.io.getMatrixHandler().clearMatrix();
-		hand.io.getMatrixHandler().appendText("Laden...");
+		//MenuHandler hand = new MenuHandler();
+		//hand.io.getMatrixHandler().clearMatrix();
+		//hand.io.getMatrixHandler().appendText("Laden...");
+		
+		IOHandler iohandler = new IOHandler();
+		
+		Menu menu = new Menu(iohandler, "Menu:",
+				new MenuItem("Test 1").addAll(
+						new MenuItem("Test 1.1").setAction(() -> {
+							iohandler.getMatrixHandler().clearMatrix();
+							iohandler.getMatrixHandler().appendText("You found me!");
+							in_menu.set(false);
+						}),
+						new MenuItem("Test 1.2")),
+				new MenuItem("Test 2"),
+				new MenuItem("Test 3"),
+				new MenuItem("Test 4").addAll(
+						new MenuItem("Test 4.1"),
+						new MenuItem("Test 4.2")),
+				new MenuItem("Test 5"),
+				new MenuItem("Test 6"));
+		menu.draw();
+		
+		iohandler.setOnButtonListener(new ButtonHandler() {
+			@Override
+			public void onButtonClicked(int button) {
+				if (in_menu.get()) {
+					switch (button) {
+					case BUTTON_LEFT:
+						menu.focusPrevious();
+						break;
+					case BUTTON_RIGHT:
+						menu.focusNext();
+						break;
+					case BUTTON_SELECT:
+						menu.select();
+					}
+				} else {
+					if (button == BUTTON_SELECT) {
+						in_menu.set(true);
+						menu.draw();
+					}
+				}
+			}
+		});
 		
 		// Measurements: The Database Util.
 		// Pass todays date as the period we want data from (as a test).
@@ -27,15 +75,15 @@ public class MainApp {
 		// been collected. Now display some useful information ;)
 		Period p = measurements.getLongestPeriodWithLessRainfallThan(0);
 		if (p == null) {
-			hand.io.getMatrixHandler().clearMatrix();
-			hand.io.getMatrixHandler().appendText("Geen data.");
+//			hand.io.getMatrixHandler().clearMatrix();
+//			hand.io.getMatrixHandler().appendText("Geen data.");
 		} else {
-			hand.io.getMatrixHandler().clearMatrix();
-			hand.io.getMatrixHandler().appendText("Droogte:\n" + 
-					String.format("Van: %1$td-%1$tm %1$tH:%1$tM:%1$tS\n"
-							+ "Tot: %2$td-%2$tm %2$tH:%2$tM:%2$tS",
-							p.getStartDate(),
-							p.getEndDate()));
+//			hand.io.getMatrixHandler().clearMatrix();
+//			hand.io.getMatrixHandler().appendText("Droogte:\n" + 
+//					String.format("Van: %1$td-%1$tm %1$tH:%1$tM:%1$tS\n"
+//							+ "Tot: %2$td-%2$tm %2$tH:%2$tM:%2$tS",
+//							p.getStartDate(),
+//							p.getEndDate()));
 		}
 	}
 	
