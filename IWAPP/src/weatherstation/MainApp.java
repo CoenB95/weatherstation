@@ -22,19 +22,21 @@ public class MainApp {
 		// Measurements: The Database Util.
 		// Pass todays date as the period we want data from (as a test).
 		Measurements measurements = 
-				new Measurements(LocalDate.now().minusDays(365), LocalDate.now());
+				new Measurements(LocalDate.now().minusYears(2), LocalDate.now()
+						.minusYears(1));
 		
 		// The previous instruction blocks the main thread until the data has
 		// been collected. Now display some useful information ;)
-		Period p = measurements.getLongestPeriodWithLessRainfallThan(0);
+		Period p = measurements.getLongestPeriodWithMoreThan(25, Measurement.TEMPERATURE_OUTSIDE);
 		if (p == null) {
 			hand.io.getMatrixHandler().clearMatrix();
 			hand.io.getMatrixHandler().appendText("Geen data.");
 		} else {
 			hand.io.getMatrixHandler().clearMatrix();
-			hand.io.getMatrixHandler().appendText("Droogte:\n" + 
-					String.format("Van: %1$td-%1$tm %1$tH:%1$tM:%1$tS\n"
-							+ "Tot: %2$td-%2$tm %2$tH:%2$tM:%2$tS",
+			hand.io.getMatrixHandler().appendText("Hittegolf: " + 
+					String.format("%.1f\nVan: %2$td-%2$tm-%2$ty %2$tH:%2$tM\n"
+							+ "Tot: %3$td-%3$tm-%3$ty %3$tH:%3$tM",
+							measurements.getDegreeDays(),
 							p.getStartDate(),
 							p.getEndDate()));
 		}
