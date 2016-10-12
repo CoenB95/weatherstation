@@ -18,6 +18,7 @@ public class MainApp {
 		hand.io.getMatrixHandler().clearMatrix();
 		hand.io.getMatrixHandler().appendText("Laden...");
 		
+
 		// Measurements: The Database Util.
 		// Pass todays date as the period we want data from (as a test).
 		Measurements measurements = 
