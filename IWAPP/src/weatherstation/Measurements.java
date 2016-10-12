@@ -2,6 +2,7 @@ package weatherstation;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,14 +16,6 @@ public class Measurements {
 	private List<Measurement> measurements;
 	/**Contains all the measurements of the current period, split on a daily bases.*/
 	private List<List<Measurement>> measurementsPerDay;
-
-	/**
-	 * @deprecated A period should be set from the beginning.
-	 */
-	public Measurements() {
-		station = new WeatherStation();
-		measurements = new ArrayList<>();
-	}
 
 	public Measurements(LocalDate d) {
 		this(d, d);
@@ -101,7 +94,7 @@ public class Measurements {
 		result.add(min);
 		return result;
 	}
-	
+
 	/**
 	 *  This method calculates the average of the values specified in the MainApp.
 	 *  It requests a List from the MainApp with values depending on the field variable.
@@ -146,5 +139,65 @@ public class Measurements {
 				result.add(value);
 		}
 		return result;
+	}
+
+	/**
+	 * Returns the longest period with a certain maximum rainrate.
+	 * @return
+	 */
+
+	public Period getLongestPeriodWithLessRainfallThan(double maxRainfall) {
+		Period period = new Period(LocalDateTime.now(), LocalDateTime.now());
+		if (measurements.isEmpty()) return null;
+		LocalDateTime start = null;
+		for (Measurement m:measurements) {
+			if (start == null) {
+				if (m.getRainRate() <= maxRainfall) start = m.getDateStamp();
+			} else {
+				if (m.getRainRate() > maxRainfall) {
+					
+					if (ChronoUnit.MINUTES.between(start, m.getDateStamp()) > 
+					ChronoUnit.MINUTES.between(period.getStartDate(), 
+							period.getEndDate())) {
+						
+						period = new Period(start, m.getDateStamp());
+					}
+					start = null;
+				}
+			}
+		}
+		if (start != null) {
+			Measurement m = measurements.get(measurements.size()-1);
+			if (ChronoUnit.MINUTES.between(start, m.getDateStamp()) > 
+			ChronoUnit.MINUTES.between(period.getStartDate(), 
+					period.getEndDate())) {
+				
+				period = new Period(start, m.getDateStamp());
+			}
+		}
+		
+		return period;
+	}
+
+	public double getStandardDeviation(int field){
+		double total = 0;
+		double avg = 0;
+		double vari = 0;
+		double devtot = 0;
+		int i = 0;
+
+		for (Measurement m:measurements){
+			total += m.getDouble(field);
+			i++;
+		}
+		avg = total / i;
+
+		for (Measurement n : measurements){
+			devtot += Math.pow((n.getDouble(field) - avg), 2);
+		}
+		vari = devtot / i;
+
+		return Math.sqrt(vari);
+		//return Math.sqrt(vari);
 	}
 }
