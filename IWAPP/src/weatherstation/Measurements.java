@@ -125,6 +125,21 @@ public class Measurements {
 		result.add(avg);
 		return result;
 	}
+	
+	public List<Double> getMedian(int field) {
+		List<Double> result = new ArrayList<>();
+		for (List<Measurement> ms:measurementsPerDay) {
+			if (ms.isEmpty()) break;
+			Double value;
+			int middle = ms.size()/2;
+			if (ms.size()%2 == 1) 
+				value = ms.get(middle).getDouble(field);
+			value = (ms.get(middle-1).getDouble(field) + ms.get(middle).getDouble(field)) / 2.0;
+			if(value != null) 
+				result.add(value);
+		}
+		return result;
+	}
 
 	/**
 	 * Returns the longest period with a certain maximum rainrate.

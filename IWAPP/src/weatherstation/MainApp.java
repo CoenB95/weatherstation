@@ -66,6 +66,7 @@ public class MainApp {
 			}
 		});
 		
+
 		// Measurements: The Database Util.
 		// Pass todays date as the period we want data from (as a test).
 		Measurements measurements = 
