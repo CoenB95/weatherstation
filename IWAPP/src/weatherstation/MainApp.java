@@ -70,11 +70,12 @@ public class MainApp {
 		// Measurements: The Database Util.
 		// Pass todays date as the period we want data from (as a test).
 		Measurements measurements = 
-				new Measurements(LocalDate.now().minusDays(365), LocalDate.now());
+				new Measurements(LocalDate.now().minusYears(2), LocalDate.now()
+						.minusYears(1));
 		
 		// The previous instruction blocks the main thread until the data has
 		// been collected. Now display some useful information ;)
-		Period p = measurements.getLongestPeriodWithLessRainfallThan(0);
+		Period p = measurements.getLongestPeriodWithMoreThan(25, Measurement.TEMPERATURE_OUTSIDE);
 		if (p == null) {
 //			hand.io.getMatrixHandler().clearMatrix();
 //			hand.io.getMatrixHandler().appendText("Geen data.");
