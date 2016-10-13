@@ -16,8 +16,6 @@ public class MainApp {
 	
 	public static void main(String[] args) {
 		
-		BooleanProperty in_menu = new SimpleBooleanProperty(true);
-		
 		setupConnectionWithDisplay();
 		
 		//MenuHandler hand = new MenuHandler();
@@ -35,7 +33,6 @@ public class MainApp {
 					iohandler.getMatrixHandler().clearMatrix();
 					iohandler.getMatrixHandler().appendText(
 							measurements.hadHeatwave() ? "Ja" : "Nee");
-					in_menu.set(false);
 				}),
 				new MenuItem("Test 1.2")),
 				new MenuItem("Regen").addAll(
@@ -45,7 +42,6 @@ public class MainApp {
 									0, Measurement.RAINRATE);
 							iohandler.getMatrixHandler().appendText(
 									p.getStartDate() + "\ntot\n" + p.getEndDate());
-							in_menu.set(false);
 						}))};
 		
 		Menu menu = new Menu(iohandler, "Periode:",
@@ -72,22 +68,15 @@ public class MainApp {
 		iohandler.setOnButtonListener(new ButtonHandler() {
 			@Override
 			public void onButtonClicked(int button) {
-				if (in_menu.get()) {
-					switch (button) {
-					case BUTTON_LEFT:
-						menu.focusPrevious();
-						break;
-					case BUTTON_RIGHT:
-						menu.focusNext();
-						break;
-					case BUTTON_SELECT:
-						menu.select();
-					}
-				} else {
-					if (button == BUTTON_SELECT) {
-						in_menu.set(true);
-						menu.draw();
-					}
+				switch (button) {
+				case BUTTON_LEFT:
+					menu.focusPrevious();
+					break;
+				case BUTTON_RIGHT:
+					menu.focusNext();
+					break;
+				case BUTTON_SELECT:
+					menu.select();
 				}
 			}
 		});

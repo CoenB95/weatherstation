@@ -10,6 +10,7 @@ public class Menu {
 	private IOHandler io;
 	private MenuItem currentMenu;
 	private int index = -1;
+	private boolean inAction = false;
 	
 	public Menu(IOHandler h, String title, MenuItem... baseItems) {
 		this(h, title, Arrays.asList(baseItems));
@@ -60,22 +61,30 @@ public class Menu {
 	}
 	
 	public void focusNext() {
-		if (currentMenu.hasIndex(index + 1)) {//index < items.size()-1) {
+		if (currentMenu.hasIndex(index + 1) && !inAction) {
 			index++;
 			draw();
 		} else System.out.println("No further");
 	}
 	
 	public void focusPrevious() {
-		if (currentMenu.hasIndex(index - 1)) {
+		if (currentMenu.hasIndex(index - 1) && !inAction) {
 			index--;
 			draw();
 		} else System.out.println("No further");
 	}
 	
 	public void select() {
-		if (!currentMenu.isBackIndex(index) && currentMenu.getItem(index).hasAction())
-			currentMenu.getItem(index).runAction();
+		if (!currentMenu.isBackIndex(index) && currentMenu.getItem(index).hasAction()) {
+			if (inAction) {
+				inAction = false;
+				draw();
+			}
+			else {
+				currentMenu.getItem(index).runAction();
+				inAction = true;
+			}
+		}
 		if (!currentMenu.getItem(index).isEmpty()) {
 			currentMenu = currentMenu.getItem(index);
 			index = currentMenu.hasIndex(0) ? 0 : -1;
