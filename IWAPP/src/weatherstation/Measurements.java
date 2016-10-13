@@ -35,6 +35,7 @@ public class Measurements {
 
 	public void fetchPeriod(LocalDate d1, LocalDate d2) {
 		station.getAllMeasurementsBetween(d1, d2);
+		measurements.clear();
 		for (RawMeasurement rm : station.getAllMeasurementsBetween(d1, d2)) {
 			measurements.add(new Measurement(rm));
 		}
@@ -267,9 +268,9 @@ public class Measurements {
 		LocalDateTime start = null;
 		for (Measurement m:measurements) {
 			if (start == null) {
-				if (m.getDouble(field) >= min) start = m.getDateStamp();
+				if (m.getDouble(field) > min) start = m.getDateStamp();
 			} else {
-				if (m.getDouble(field) < min) {
+				if (m.getDouble(field) <= min) {
 
 					if (ChronoUnit.MINUTES.between(start, m.getDateStamp()) > 
 					ChronoUnit.MINUTES.between(period.getStartDate(), 
