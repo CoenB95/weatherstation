@@ -215,6 +215,47 @@ public class Measurements {
 	}
 	
 	/**
+	 * Find the longest minute-duration wherein a certain field's value rises.
+	 * @return a Period containing the start and end-time.
+	 */
+	public Period getLongestDurationWithRising(int field) {
+		Period period = new Period(LocalDateTime.now(), LocalDateTime.now());
+		if (measurements.isEmpty()) return null;
+		LocalDateTime start = null;
+		double last = 0;
+		for (Measurement m:measurements) {
+			if (start == null) {
+				last = m.getDouble(field);
+				start = m.getDateStamp();
+			} else {
+				if (m.getDouble(field) < last) {
+					
+					if (ChronoUnit.MINUTES.between(start, m.getDateStamp()) > 
+					ChronoUnit.MINUTES.between(period.getStartDate(), 
+							period.getEndDate())) {
+						
+						period = new Period(start, m.getDateStamp());
+					}
+					start = null;
+				} else {
+					last = m.getDouble(field);
+				}
+			}
+		}
+		if (start != null) {
+			Measurement m = measurements.get(measurements.size()-1);
+			if (ChronoUnit.MINUTES.between(start, m.getDateStamp()) > 
+			ChronoUnit.MINUTES.between(period.getStartDate(), 
+					period.getEndDate())) {
+				
+				period = new Period(start, m.getDateStamp());
+			}
+		}
+		
+		return period;
+	}
+	
+	/**
 	 * Find the longest minute-duration wherein a certain field's value stays above
 	 * the specified minimum.
 	 * @return a Period containing the start and end-time.
