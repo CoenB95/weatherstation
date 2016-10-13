@@ -82,7 +82,7 @@ public class Menu {
 			}
 			else {
 				currentMenu.getItem(index).runAction();
-				inAction = true;
+				if (currentMenu.getItem(index).isEmpty()) inAction = true;
 			}
 		}
 		if (!currentMenu.getItem(index).isEmpty()) {
