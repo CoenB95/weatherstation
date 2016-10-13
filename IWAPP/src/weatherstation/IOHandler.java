@@ -196,6 +196,14 @@ public class IOHandler {
 			//System.out.println(IO.readShort(0x42 | 0x00));
 		}
 
+		public void addLine(String text) {
+			for (char x:text.toCharArray()) {
+				if (row < 3 && index < 21) IO.writeShort(0x40, x);
+			}
+			if (row < 2) IO.writeShort(0x40,'\n');
+			row++;
+		}
+		
 		public void appendText(String text) {
 			for (char x:text.toCharArray()) {
 				IO.writeShort(0x40, x);

@@ -27,25 +27,25 @@ public class Menu {
 		MatrixHandler m = io.getMatrixHandler();
 		m.clearMatrix();
 		// Row 1
-		if (index < 0) m.appendText("\n");
+		if (index < 0) m.addLine("");
 		else if (index > 0)
-			m.appendText(" " + currentMenu.getItem(index-1).getTitle() + "\n");
-		else m.appendText(currentMenu.getTitle() + "\n");
+			m.addLine(" " + currentMenu.getItem(index-1).getTitle());
+		else m.addLine(currentMenu.getTitle());
 		
 		// Row 2
-		if (index < 0) m.appendText(currentMenu.getTitle() + "\n");
+		if (index < 0) m.addLine(currentMenu.getTitle());
 		else if (currentMenu.hasIndex(index)) {
 			if (currentMenu.isBackIndex(index))
-				m.appendText(" Terug");
-			else m.appendText(" " + currentMenu.getItem(index).getTitle() + "\n");
+				m.addLine(" Terug");
+			else m.addLine(" " + currentMenu.getItem(index).getTitle());
 		}
 		//else if (index == items.size() && backAllowed) m.appendText(" < Terug");
 		
 		// Row 3
 		if (currentMenu.hasIndex(index + 1)) {
 			if (currentMenu.isBackIndex(index + 1))
-				m.appendText(" Terug");
-			else m.appendText(" " + currentMenu.getItem(index + 1).getTitle());
+				m.addLine(" Terug");
+			else m.addLine(" " + currentMenu.getItem(index + 1).getTitle());
 		}
 		//if (index + 1 < items.size()) m.appendText(" " + items.get(index + 1).title);
 		//else if (index + 1 == items.size() && backAllowed) m.appendText(" < Terug");
