@@ -62,7 +62,7 @@ public class Measurements {
 		}
 		measurementsPerDay.add(new ArrayList<>(measurements_of_the_day));
 	}
-	
+
 	public double getDegreeDays() {
 		double days = 0;
 		for (double d:getAverage(Measurement.TEMPERATURE_OUTSIDE)) {
@@ -70,7 +70,7 @@ public class Measurements {
 		}
 		return days;
 	}
-	
+
 	public boolean hadHeatwave() {
 		int count_25 = 0;
 		int count_30 = 0;
@@ -78,7 +78,7 @@ public class Measurements {
 			if (d >= 25) count_25++;
 			else count_25 = 0;
 			if (d >= 30) count_30++;
-			
+
 			if (count_25 >= 5 && count_30 >= 2) return true;
 		}
 		return false;
@@ -130,21 +130,21 @@ public class Measurements {
 	 * @return
 	 */
 	public List<Double> getAverage(int field) {
-//		double total = 0;
+		//		double total = 0;
 		List<Double> result = new ArrayList<>();
 		if (measurements.isEmpty()) return result;
 		LocalDateTime date = measurements.get(0).getDateStamp();
-//		double avg = 0;
+		//		double avg = 0;
 		for (List<Measurement> ms:measurementsPerDay) {
-//		for (Measurement m:measurements) {
-//			if (m.getDateStamp().getDayOfYear() > date.getDayOfYear() ||
-//					m.getDateStamp().getDayOfYear() == 0) {
-//				date = m.getDateStamp();
-//				avg = avg / total;
-//				result.add(avg);
-//				avg = 0;
-//				total = 0;
-//			}
+			//		for (Measurement m:measurements) {
+			//			if (m.getDateStamp().getDayOfYear() > date.getDayOfYear() ||
+			//					m.getDateStamp().getDayOfYear() == 0) {
+			//				date = m.getDateStamp();
+			//				avg = avg / total;
+			//				result.add(avg);
+			//				avg = 0;
+			//				total = 0;
+			//			}
 			double avg = 0;
 			double total = 0;
 			for (Measurement m:ms) {
@@ -153,11 +153,11 @@ public class Measurements {
 			}
 			result.add(avg/total);
 		}
-//		avg = avg / total;
-//		result.add(avg);
+		//		avg = avg / total;
+		//		result.add(avg);
 		return result;
 	}
-	
+
 	public List<Double> getMedian(int field) {
 		List<Double> result = new ArrayList<>();
 		for (List<Measurement> ms:measurementsPerDay) {
@@ -189,12 +189,12 @@ public class Measurements {
 					start = measurementsPerDay.get(i).get(0).getDateStamp();
 			} else {
 				if (doubles.get(i) < min) {
-					
+
 					if (ChronoUnit.MINUTES.between(start, 
 							measurementsPerDay.get(i).get(0).getDateStamp()) > 
 					ChronoUnit.MINUTES.between(period.getStartDate(), 
 							period.getEndDate())) {
-						
+
 						period = new Period(start, 
 								measurementsPerDay.get(i).get(0).getDateStamp());
 					}
@@ -207,14 +207,14 @@ public class Measurements {
 			if (ChronoUnit.MINUTES.between(start, m.getDateStamp()) > 
 			ChronoUnit.MINUTES.between(period.getStartDate(), 
 					period.getEndDate())) {
-				
+
 				period = new Period(start, m.getDateStamp());
 			}
 		}
-		
+
 		return period;
 	}
-	
+
 	/**
 	 * Find the longest minute-duration wherein a certain field's value rises.
 	 * @return a Period containing the start and end-time.
@@ -270,11 +270,11 @@ public class Measurements {
 				if (m.getDouble(field) >= min) start = m.getDateStamp();
 			} else {
 				if (m.getDouble(field) < min) {
-					
+
 					if (ChronoUnit.MINUTES.between(start, m.getDateStamp()) > 
 					ChronoUnit.MINUTES.between(period.getStartDate(), 
 							period.getEndDate())) {
-						
+
 						period = new Period(start, m.getDateStamp());
 					}
 					start = null;
@@ -286,14 +286,14 @@ public class Measurements {
 			if (ChronoUnit.MINUTES.between(start, m.getDateStamp()) > 
 			ChronoUnit.MINUTES.between(period.getStartDate(), 
 					period.getEndDate())) {
-				
+
 				period = new Period(start, m.getDateStamp());
 			}
 		}
-		
+
 		return period;
 	}
-	
+
 	/**
 	 * Find the longest minute-duration wherein a certain field's value stays below
 	 * the specified maximum.
@@ -308,11 +308,11 @@ public class Measurements {
 				if (m.getDouble(field) <= max) start = m.getDateStamp();
 			} else {
 				if (m.getDouble(field) > max) {
-					
+
 					if (ChronoUnit.MINUTES.between(start, m.getDateStamp()) > 
 					ChronoUnit.MINUTES.between(period.getStartDate(), 
 							period.getEndDate())) {
-						
+
 						period = new Period(start, m.getDateStamp());
 					}
 					start = null;
@@ -324,11 +324,11 @@ public class Measurements {
 			if (ChronoUnit.MINUTES.between(start, m.getDateStamp()) > 
 			ChronoUnit.MINUTES.between(period.getStartDate(), 
 					period.getEndDate())) {
-				
+
 				period = new Period(start, m.getDateStamp());
 			}
 		}
-		
+
 		return period;
 	}
 
@@ -385,13 +385,30 @@ public class Measurements {
 		}
 		
 		return result;
-		}
+	}
 
 	private Double round(double value, int i) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	}
-	
-	
 
+	public double getHighestContinuousRainrate() {
+		double highestRainfall = 0;
+		double tempHighestRainfall = 0;
+		if (measurements.isEmpty()) return 0;
+		for (Measurement m:measurements) {
+			double rainrate = m.getDouble(7);
+			double rainfall = rainrate / 60;
+			if (tempHighestRainfall > highestRainfall) {
+				highestRainfall = tempHighestRainfall;
+			}
+			if (rainrate <= 0) {
+				tempHighestRainfall = 0;
+			} else {
+				tempHighestRainfall = tempHighestRainfall + rainfall;
+			}
+		}
+
+		return highestRainfall;
+	}
+}
