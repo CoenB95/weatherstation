@@ -11,37 +11,67 @@ import weatherstation.sql.RawMeasurement;
 import weatherstation.sql.WeatherStation;
 
 public class MainApp {
-	
+
 	public static void main(String[] args) {
-		
+
 		setupConnectionWithDisplay();
-		
+
 		//MenuHandler hand = new MenuHandler();
 		//hand.io.getMatrixHandler().clearMatrix();
 		//hand.io.getMatrixHandler().appendText("Laden...");
-		
+
 		IOHandler iohandler = new IOHandler();
-		
+
 		// Measurements: The Database Util.
 		// Pass todays date as the period we want data from (as a test).
 		Measurements measurements = new Measurements();
-		
-		MenuItem[] inner = {new MenuItem("Temperatuur").addAll(
-				new MenuItem("Hittegolf").setAction(() -> {
-					iohandler.getMatrixHandler().clearMatrix();
-					iohandler.getMatrixHandler().appendText(
-							measurements.hadHeatwave() ? "Ja" : "Nee");
-				}),
-				new MenuItem("Test 1.2")),
-				new MenuItem("Regen").addAll(
-						new MenuItem("Langste droogte").setAction(() -> {
+
+		//2nd menu
+		MenuItem[] inner = 
+			{
+				new MenuItem("Temperatuur").addAll(
+						new MenuItem("Hittegolf").setAction(() -> {
 							iohandler.getMatrixHandler().clearMatrix();
-							Period p = measurements.getLongestDurationWithLessThan(
-									0, Measurement.RAINRATE);
 							iohandler.getMatrixHandler().appendText(
-									p.getStartDate() + "\ntot\n" + p.getEndDate());
-						}))};
-		
+									measurements.hadHeatwave() ? "Ja" : "Nee");
+						}),
+						new MenuItem("Graaddagen").setAction(() -> {
+							iohandler.getMatrixHandler().clearMatrix();
+							iohandler.getMatrixHandler().appendText(
+									measurements.getDegreeDays() + " graaddagen");
+						}),
+						new MenuItem("Langste stijging").setAction(() -> {
+							iohandler.getMatrixHandler().clearMatrix();
+							Period p = measurements.getLongestDurationWithRising(Measurement.TEMPERATURE_OUTSIDE);
+							iohandler.getMatrixHandler().appendText(p.getStartDate() + "\ntot\n" + p.getEndDate());
+						})),
+				
+						
+
+				new MenuItem("Neerslag").addAll(
+					new MenuItem("Langste droogte").setAction(() -> {
+						iohandler.getMatrixHandler().clearMatrix();
+						Period p = measurements.getLongestDurationWithLessThan(
+							0, Measurement.RAINRATE);
+						iohandler.getMatrixHandler().appendText(
+							p.getStartDate() + "\ntot\n" + p.getEndDate());
+						}),
+					new MenuItem("Langste natte periode").setAction(() -> {
+						iohandler.getMatrixHandler().clearMatrix();
+						Period p = measurements.getLongestDurationWithMoreThan(
+							0, Measurement.RAINRATE);
+						iohandler.getMatrixHandler().appendText(
+							p.getStartDate() + "\ntot\n" + p.getEndDate());
+						}),
+					new MenuItem("Meeste aaneengesloten").setAction(() -> {
+						iohandler.getMatrixHandler().clearMatrix();
+						double d = measurements.getHighestContinuousRainrate();
+						iohandler.getMatrixHandler().appendText(
+							d + " mm");
+						})
+				)};
+
+		//1st menu
 		Menu menu = new Menu(iohandler, "Periode:",
 				new MenuItem("Afgelopen jaar").setAction(() -> {
 					iohandler.getMatrixHandler().clearMatrix();
@@ -62,7 +92,7 @@ public class MainApp {
 							LocalDate.now());
 				}).addAll(inner));
 		menu.draw();
-		
+
 		iohandler.setOnButtonListener(new ButtonHandler() {
 			@Override
 			public void onButtonClicked(int button) {
@@ -79,7 +109,7 @@ public class MainApp {
 			}
 		});
 	}
-	
+
 	/**Starts the wsDisplay.jar and monitors it. When that application
 	 * closes, we exit too.*/
 	public static void setupConnectionWithDisplay() {
@@ -97,7 +127,7 @@ public class MainApp {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static Measurement testDatabase() {
 		WeatherStation station = new WeatherStation();
 		RawMeasurement raw = station.getMostRecentMeasurement();
