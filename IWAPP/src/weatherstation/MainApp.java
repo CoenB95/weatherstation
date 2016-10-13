@@ -3,6 +3,7 @@ package weatherstation;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 
 import weatherstation.IOHandler.ButtonHandler;
 import weatherstation.menu.fallback.IntegerMenuItem;
@@ -45,6 +46,36 @@ public class MainApp {
 							iohandler.getMatrixHandler().clearMatrix();
 							Period p = measurements.getLongestDurationWithRising(Measurement.TEMPERATURE_OUTSIDE);
 							iohandler.getMatrixHandler().appendText(p.getStartDate() + "\ntot\n" + p.getEndDate());
+						}),
+						new MenuItem("Langste zomerse periode").setAction(() -> {
+							iohandler.getMatrixHandler().clearMatrix();
+							Period p = measurements.getLongestPeriodWithMoreThan(25, Measurement.TEMPERATURE_OUTSIDE);
+							iohandler.getMatrixHandler().appendText(p.getStartDate() + "\ntot\n" + p.getEndDate());
+						}),
+							new MenuItem("Hoogste").setAction(() -> {
+								iohandler.getMatrixHandler().clearMatrix();
+								iohandler.getMatrixHandler().appendText(printList(
+										measurements.getHighest(Measurement.TEMPERATURE_OUTSIDE)) + " graden");
+							}),
+							new MenuItem("Laagste").setAction(() -> {
+								iohandler.getMatrixHandler().clearMatrix();
+								iohandler.getMatrixHandler().appendText(printList(
+										measurements.getLowest(Measurement.TEMPERATURE_OUTSIDE)) + " graden");
+							}),
+							new MenuItem("Modus").setAction(() -> {
+								iohandler.getMatrixHandler().clearMatrix();
+								iohandler.getMatrixHandler().appendText(printList(
+										measurements.getModus(Measurement.TEMPERATURE_OUTSIDE)) + " graden");
+							}),
+							new MenuItem("Mediaan").setAction(() -> {
+								iohandler.getMatrixHandler().clearMatrix();
+								iohandler.getMatrixHandler().appendText(printList(
+										measurements.getMedian(Measurement.TEMPERATURE_OUTSIDE)) + " graden");
+							}),
+							new MenuItem("Gemiddelde").setAction(() -> {
+								iohandler.getMatrixHandler().clearMatrix();
+								iohandler.getMatrixHandler().appendText(printList(
+										measurements.getAverage(Measurement.TEMPERATURE_OUTSIDE)) + " graden");
 						})),
 				
 						
@@ -140,5 +171,13 @@ public class MainApp {
 			System.out.println(real.toString());
 			return real;
 		} else return null;
+	}
+	
+	public static String printList(List<Double> list) {
+		String s = "";
+		for (Double d : list) {
+			s += String.format("%.1f ", d);
+		}
+		return s;
 	}
 }
