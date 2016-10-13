@@ -74,9 +74,9 @@ public class Menu {
 	}
 	
 	public void select() {
-		if (currentMenu.getItem(index).hasAction()) {
+		if (!currentMenu.isBackIndex(index) && currentMenu.getItem(index).hasAction())
 			currentMenu.getItem(index).runAction();
-		} else {
+		if (!currentMenu.getItem(index).isEmpty()) {
 			currentMenu = currentMenu.getItem(index);
 			index = currentMenu.hasIndex(0) ? 0 : -1;
 			draw();

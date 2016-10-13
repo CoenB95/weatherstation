@@ -26,21 +26,47 @@ public class MainApp {
 		
 		IOHandler iohandler = new IOHandler();
 		
-		Menu menu = new Menu(iohandler, "Menu:",
-				new MenuItem("Test 1").addAll(
-						new MenuItem("Test 1.1").setAction(() -> {
+		// Measurements: The Database Util.
+		// Pass todays date as the period we want data from (as a test).
+		Measurements measurements = new Measurements();
+		
+		MenuItem[] inner = {new MenuItem("Temperatuur").addAll(
+				new MenuItem("Hittegolf").setAction(() -> {
+					iohandler.getMatrixHandler().clearMatrix();
+					iohandler.getMatrixHandler().appendText(
+							measurements.hadHeatwave() ? "Ja" : "Nee");
+					in_menu.set(false);
+				}),
+				new MenuItem("Test 1.2")),
+				new MenuItem("Regen").addAll(
+						new MenuItem("Langste droogte").setAction(() -> {
 							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText("You found me!");
+							Period p = measurements.getLongestDurationWithLessThan(
+									0, Measurement.RAINRATE);
+							iohandler.getMatrixHandler().appendText(
+									p.getStartDate() + "\ntot\n" + p.getEndDate());
 							in_menu.set(false);
-						}),
-						new MenuItem("Test 1.2")),
-				new MenuItem("Test 2"),
-				new MenuItem("Test 3"),
-				new MenuItem("Test 4").addAll(
-						new MenuItem("Test 4.1"),
-						new MenuItem("Test 4.2")),
-				new MenuItem("Test 5"),
-				new MenuItem("Test 6"));
+						}))};
+		
+		Menu menu = new Menu(iohandler, "Periode:",
+				new MenuItem("Afgelopen jaar").setAction(() -> {
+					iohandler.getMatrixHandler().clearMatrix();
+					iohandler.getMatrixHandler().appendText("laden...");
+					measurements.fetchPeriod(LocalDate.now().minusYears(1), 
+							LocalDate.now());
+				}).addAll(inner),
+				new MenuItem("Afgelopen maand").setAction(() -> {
+					iohandler.getMatrixHandler().clearMatrix();
+					iohandler.getMatrixHandler().appendText("laden...");
+					measurements.fetchPeriod(LocalDate.now().minusMonths(1), 
+							LocalDate.now());
+				}).addAll(inner),
+				new MenuItem("Vandaag").setAction(() -> {
+					iohandler.getMatrixHandler().clearMatrix();
+					iohandler.getMatrixHandler().appendText("laden...");
+					measurements.fetchPeriod(LocalDate.now(), 
+							LocalDate.now());
+				}).addAll(inner));
 		menu.draw();
 		
 		iohandler.setOnButtonListener(new ButtonHandler() {
@@ -65,28 +91,6 @@ public class MainApp {
 				}
 			}
 		});
-		
-
-		// Measurements: The Database Util.
-		// Pass todays date as the period we want data from (as a test).
-		Measurements measurements = 
-				new Measurements(LocalDate.now().minusYears(2), LocalDate.now()
-						.minusYears(1));
-		
-		// The previous instruction blocks the main thread until the data has
-		// been collected. Now display some useful information ;)
-		Period p = measurements.getLongestPeriodWithMoreThan(25, Measurement.TEMPERATURE_OUTSIDE);
-		if (p == null) {
-//			hand.io.getMatrixHandler().clearMatrix();
-//			hand.io.getMatrixHandler().appendText("Geen data.");
-		} else {
-//			hand.io.getMatrixHandler().clearMatrix();
-//			hand.io.getMatrixHandler().appendText("Droogte:\n" + 
-//					String.format("Van: %1$td-%1$tm %1$tH:%1$tM:%1$tS\n"
-//							+ "Tot: %2$td-%2$tm %2$tH:%2$tM:%2$tS",
-//							p.getStartDate(),
-//							p.getEndDate()));
-		}
 	}
 	
 	/**Starts the wsDisplay.jar and monitors it. When that application

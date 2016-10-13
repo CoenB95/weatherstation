@@ -55,6 +55,10 @@ public class MenuItem {
 		return backAllowed && i == items.size();
 	}
 	
+	public boolean isEmpty() {
+		return items.size() == 0;
+	}
+	
 	public void runAction() {
 		action.run();
 	}

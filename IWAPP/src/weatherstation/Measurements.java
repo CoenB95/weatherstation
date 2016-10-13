@@ -17,6 +17,11 @@ public class Measurements {
 	/**Contains all the measurements of the current period, split on a daily bases.*/
 	private List<List<Measurement>> measurementsPerDay;
 
+	public Measurements() {
+		station = new WeatherStation();
+		measurements = new ArrayList<>();
+	}
+	
 	public Measurements(LocalDate d) {
 		this(d, d);
 	}
