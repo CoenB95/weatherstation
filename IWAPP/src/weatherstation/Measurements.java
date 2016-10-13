@@ -1,5 +1,6 @@
 package weatherstation;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -352,4 +353,45 @@ public class Measurements {
 		return Math.sqrt(vari);
 		//return Math.sqrt(vari);
 	}
-}
+	
+	public List<Double> getModus(int field) {
+		List<Double> result = new ArrayList<>();
+		int maxCount = 0;
+		double maxValue = 0;
+		ArrayList<Double> arraylist = new ArrayList<>();
+		for (List<Measurement> ms:measurementsPerDay) {
+			if (ms.isEmpty()) break;
+			double value = ms.get(0).getDouble(field);
+			for (Measurement m:ms) {
+				arraylist.add(value* 100 / 100.00);
+				}
+			for(int i = 0; i < arraylist.size(); ++i){
+				int count = 0;
+				for(int j = 0; j < arraylist.size(); ++j){
+					if (arraylist.get(j) == arraylist.get(i)){
+						++count;
+					}
+					if (count > maxCount){
+						maxCount = count;
+						maxValue = arraylist.get(i);
+				
+				}
+				}
+			}
+			result.add(maxValue);
+			maxValue = 0;
+			maxCount = 0;
+			arraylist.clear();
+		}
+		
+		return result;
+		}
+
+	private Double round(double value, int i) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	}
+	
+	
+
