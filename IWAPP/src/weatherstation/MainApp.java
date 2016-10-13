@@ -27,13 +27,13 @@ public class MainApp {
 		
 		// The previous instruction blocks the main thread until the data has
 		// been collected. Now display some useful information ;)
-		Period p = measurements.getLongestPeriodWithMoreThan(25, Measurement.TEMPERATURE_OUTSIDE);
+		Period p = measurements.getLongestDurationWithRising(Measurement.TEMPERATURE_OUTSIDE);
 		if (p == null) {
 			hand.io.getMatrixHandler().clearMatrix();
 			hand.io.getMatrixHandler().appendText("Geen data.");
 		} else {
 			hand.io.getMatrixHandler().clearMatrix();
-			hand.io.getMatrixHandler().appendText("Hittegolf: " + 
+			hand.io.getMatrixHandler().appendText("Stijging: " + 
 					String.format("%.1f\nVan: %2$td-%2$tm-%2$ty %2$tH:%2$tM\n"
 							+ "Tot: %3$td-%3$tm-%3$ty %3$tH:%3$tM",
 							measurements.getDegreeDays(),
