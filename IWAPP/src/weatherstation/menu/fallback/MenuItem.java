@@ -33,6 +33,10 @@ public class MenuItem {
 		return this;
 	}
 	
+	public Runnable getAction() {
+		return action;
+	}
+	
 	public MenuItem getItem(int i) {
 		if (backAllowed && i == items.size()) return parent;
 		else if (i <= items.size()) return items.get(i);

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 
 import weatherstation.IOHandler.ButtonHandler;
+import weatherstation.menu.fallback.IntegerMenuItem;
 import weatherstation.menu.fallback.Menu;
 import weatherstation.menu.fallback.MenuItem;
 import weatherstation.sql.RawMeasurement;
@@ -49,17 +50,19 @@ public class MainApp {
 						
 
 				new MenuItem("Neerslag").addAll(
-					new MenuItem("Langste droogte").setAction(() -> {
+					new IntegerMenuItem("Langste droogte", 0, 10, (i) -> {
+					//).setAction(() -> {
 						iohandler.getMatrixHandler().clearMatrix();
 						Period p = measurements.getLongestDurationWithLessThan(
 							0, Measurement.RAINRATE);
 						iohandler.getMatrixHandler().appendText(
 							p.getStartDate() + "\ntot\n" + p.getEndDate());
 						}),
-					new MenuItem("Langste natte periode").setAction(() -> {
+					new IntegerMenuItem("Langste natte periode", 0, 10, (i) -> {
+					//.setAction(() -> {
 						iohandler.getMatrixHandler().clearMatrix();
 						Period p = measurements.getLongestDurationWithMoreThan(
-							0, Measurement.RAINRATE);
+							i, Measurement.RAINRATE);
 						iohandler.getMatrixHandler().appendText(
 							p.getStartDate() + "\ntot\n" + p.getEndDate());
 						}),
