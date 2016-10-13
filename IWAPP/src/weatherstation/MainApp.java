@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import weatherstation.IOHandler.ButtonHandler;
 import weatherstation.menu.fallback.Menu;
 import weatherstation.menu.fallback.MenuItem;
