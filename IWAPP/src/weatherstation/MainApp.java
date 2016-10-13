@@ -31,7 +31,7 @@ public class MainApp {
 		//2nd menu
 		MenuItem[] inner = 
 			{
-				new MenuItem("Temperatuur").addAll(
+				new MenuItem("Buitentemperatuur").addAll(
 						new MenuItem("Hittegolf").setAction(() -> {
 							iohandler.getMatrixHandler().clearMatrix();
 							iohandler.getMatrixHandler().appendText(
@@ -85,7 +85,7 @@ public class MainApp {
 					//).setAction(() -> {
 						iohandler.getMatrixHandler().clearMatrix();
 						Period p = measurements.getLongestDurationWithLessThan(
-							0, Measurement.RAINRATE);
+							i, Measurement.RAINRATE);
 						iohandler.getMatrixHandler().appendText(
 							p.getStartDate() + "\ntot\n" + p.getEndDate());
 						}),
