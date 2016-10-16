@@ -111,12 +111,19 @@ public class Measurements {
 			return result;
 		}
 	
-	
+	public List<Double> getHighestDaily(int field) {
+		List<Double> result = new ArrayList<>();
+		for (List<Measurement> ms:measurementsPerDay) {
+			if (ms.isEmpty()) break;
+			double max = ms.get(0).getDouble(field);
+			for (Measurement m:ms) {
+				if (m.getDouble(field) > max) max = m.getDouble(field);
+			}
+			result.add(max);
+		}
+		return result;
+	}
 		
-		
-	
-
-
 	public List<Double> getLowest(int field) {
 		List<Double> result = new ArrayList<>();
 		for (List<Measurement> ms:measurementsPerDay) {
@@ -136,6 +143,24 @@ public class Measurements {
 			return result;
 		}
 	
+	public List<Double> getLowestDaily(int field) {
+		List<Double> result = new ArrayList<>();
+		if (measurements.isEmpty()) return result;
+		LocalDateTime date = measurements.get(0).getDateStamp();
+		double min = measurements.get(0).getDouble(field);
+		for (Measurement m:measurements) {
+			if (m.getDateStamp().getDayOfYear() > date.getDayOfYear() ||
+					m.getDateStamp().getDayOfYear() == 0) {
+				date = m.getDateStamp();
+				result.add(min);
+				min = m.getDouble(field);
+			}
+			if (m.getDouble(field) < min) 
+				min = m.getDouble(field);
+		}
+		result.add(min);
+		return result;
+	}
 
 	/**
 	 *  This method calculates the average of the values specified in the MainApp.
@@ -163,7 +188,23 @@ public class Measurements {
 	result.add(avg/total);
 	return result;
 	}
-
+	
+	public List<Double> getAverageDaily(int field) {
+		List<Double> result = new ArrayList<>();
+		if (measurements.isEmpty()) return result;
+		LocalDateTime date = measurements.get(0).getDateStamp();
+		for (List<Measurement> ms:measurementsPerDay) {
+			double avg = 0;
+			double total = 0;
+			for (Measurement m:ms) {
+				avg += m.getDouble(field);
+				total++;
+			}
+			result.add(avg/total);
+		}
+		return result;
+	}
+	
 	public List<Double> getMedian(int field) {
 		List<Double> result = new ArrayList<>();
 		for (List<Measurement> ms:measurementsPerDay) {
@@ -178,7 +219,22 @@ public class Measurements {
 		}
 		return result;
 	}
-
+	
+	public List<Double> getMedianDaily(int field) {
+		List<Double> result = new ArrayList<>();
+		for (List<Measurement> ms:measurementsPerDay) {
+			if (ms.isEmpty()) break;
+			Double value;
+			int middle = ms.size()/2;
+			if (ms.size()%2 == 1) 
+				value = ms.get(middle).getDouble(field);
+			value = (ms.get(middle-1).getDouble(field) + ms.get(middle).getDouble(field)) / 2.0;
+			if(value != null) 
+				result.add(value);
+		}
+		return result;
+	}
+	
 	/**
 	 * Find the longest day-period wherein a certain field's value stays above
 	 * the specified minimum.
@@ -360,6 +416,28 @@ public class Measurements {
 		//return Math.sqrt(vari);
 	}
 	
+	public double getStandardDeviationDaily(int field){
+		double total = 0;
+		double avg = 0;
+		double vari = 0;
+		double devtot = 0;
+		int i = 0;
+
+		for (Measurement m:measurements){
+			total += m.getDouble(field);
+			i++;
+		}
+		avg = total / i;
+
+		for (Measurement n : measurements){
+			devtot += Math.pow((n.getDouble(field) - avg), 2);
+		}
+		vari = devtot / i;
+
+		return Math.sqrt(vari);
+		//return Math.sqrt(vari);
+	}
+	
 	public List<Double> getModus(int field) {
 		List<Double> result = new ArrayList<>();
 		for (List<Measurement> ms:measurementsPerDay) {
@@ -390,6 +468,39 @@ public class Measurements {
 			return result;
 					
 		}
+	
+	public List<Double> getModusDaily(int field) {
+		List<Double> result = new ArrayList<>();
+		int maxCount = 0;
+		double maxValue = 0;
+		ArrayList<Double> arraylist = new ArrayList<>();
+		for (List<Measurement> ms:measurementsPerDay) {
+			if (ms.isEmpty()) break;
+			double value = ms.get(0).getDouble(field);
+			for (Measurement m:ms) {
+				arraylist.add(value* 100 / 100.00);
+				}
+			for(int i = 0; i < arraylist.size(); ++i){
+				int count = 0;
+				for(int j = 0; j < arraylist.size(); ++j){
+					if (arraylist.get(j) == arraylist.get(i)){
+						++count;
+					}
+					if (count > maxCount){
+						maxCount = count;
+						maxValue = arraylist.get(i);
+				
+				}
+				}
+			}
+			result.add(maxValue);
+			maxValue = 0;
+			maxCount = 0;
+			arraylist.clear();
+		}
+		
+		return result;
+	}
 		
 
 	private Double round(double value, int i) {
