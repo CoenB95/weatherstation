@@ -7,6 +7,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.spi.DirStateFactory.Result;
+
 import weatherstation.sql.RawMeasurement;
 import weatherstation.sql.WeatherStation;
 
@@ -94,33 +96,46 @@ public class Measurements {
 		List<Double> result = new ArrayList<>();
 		for (List<Measurement> ms:measurementsPerDay) {
 			if (ms.isEmpty()) break;
-			double max = ms.get(0).getDouble(field);
 			for (Measurement m:ms) {
-				if (m.getDouble(field) > max) max = m.getDouble(field);
+				result.add(m.getDouble(field));
+			}}
+		int amount = result.size(); 
+			int x = 0;
+			double max = -300.0;
+			while (amount > x){
+			if (result.get(x)> max) max = result.get(x);
+			x++;
 			}
+			result.clear();
 			result.add(max);
+			return result;
 		}
-		return result;
-	}
+	
+	
+		
+		
+	
+
 
 	public List<Double> getLowest(int field) {
 		List<Double> result = new ArrayList<>();
-		if (measurements.isEmpty()) return result;
-		LocalDateTime date = measurements.get(0).getDateStamp();
-		double min = measurements.get(0).getDouble(field);
-		for (Measurement m:measurements) {
-			if (m.getDateStamp().getDayOfYear() > date.getDayOfYear() ||
-					m.getDateStamp().getDayOfYear() == 0) {
-				date = m.getDateStamp();
-				result.add(min);
-				min = m.getDouble(field);
+		for (List<Measurement> ms:measurementsPerDay) {
+			if (ms.isEmpty()) break;
+			for (Measurement m:ms) {
+				result.add(m.getDouble(field));
+			}}
+		int amount = result.size(); 
+			int x = 0;
+			double min = 300.0;
+			while (amount > x){
+			if (result.get(x)< min) min = result.get(x);
+			x++;
 			}
-			if (m.getDouble(field) < min) 
-				min = m.getDouble(field);
+			result.clear();
+			result.add(min);
+			return result;
 		}
-		result.add(min);
-		return result;
-	}
+	
 
 	/**
 	 *  This method calculates the average of the values specified in the MainApp.
@@ -131,32 +146,22 @@ public class Measurements {
 	 * @return
 	 */
 	public List<Double> getAverage(int field) {
-		//		double total = 0;
 		List<Double> result = new ArrayList<>();
-		if (measurements.isEmpty()) return result;
-		LocalDateTime date = measurements.get(0).getDateStamp();
-		//		double avg = 0;
 		for (List<Measurement> ms:measurementsPerDay) {
-			//		for (Measurement m:measurements) {
-			//			if (m.getDateStamp().getDayOfYear() > date.getDayOfYear() ||
-			//					m.getDateStamp().getDayOfYear() == 0) {
-			//				date = m.getDateStamp();
-			//				avg = avg / total;
-			//				result.add(avg);
-			//				avg = 0;
-			//				total = 0;
-			//			}
-			double avg = 0;
-			double total = 0;
+			if (ms.isEmpty()) break;
 			for (Measurement m:ms) {
-				avg += m.getDouble(field);
-				total++;
-			}
-			result.add(avg/total);
+				result.add(m.getDouble(field));
+			}}
+		double avg = 0;
+		int total = 0;
+		int amound = result.size();
+		while(total < amound){
+		avg += result.get(total);
+		total++;
 		}
-		//		avg = avg / total;
-		//		result.add(avg);
-		return result;
+	result.clear();
+	result.add(avg/total);
+	return result;
 	}
 
 	public List<Double> getMedian(int field) {
@@ -357,36 +362,35 @@ public class Measurements {
 	
 	public List<Double> getModus(int field) {
 		List<Double> result = new ArrayList<>();
-		int maxCount = 0;
-		double maxValue = 0;
-		ArrayList<Double> arraylist = new ArrayList<>();
 		for (List<Measurement> ms:measurementsPerDay) {
 			if (ms.isEmpty()) break;
-			double value = ms.get(0).getDouble(field);
 			for (Measurement m:ms) {
-				arraylist.add(value* 100 / 100.00);
-				}
-			for(int i = 0; i < arraylist.size(); ++i){
+				result.add((double) Math.round(m.getDouble(field)));
+			}}
+		System.out.println(result);
+			int maxCount = 0;
+			double maxValue = 0;
+			
+			for(int i = 0; i < result.size(); ++i){
+				double value = result.get(i);
 				int count = 0;
-				for(int j = 0; j < arraylist.size(); ++j){
-					if (arraylist.get(j) == arraylist.get(i)){
+				for(int j = i; j < result.size(); ++j){
+					double value2 = result.get(j); 
+					if (value2 == value){
 						++count;
+						result.remove(j);
 					}
 					if (count > maxCount){
 						maxCount = count;
-						maxValue = arraylist.get(i);
-				
-				}
-				}
-			}
+						maxValue = result.get(i);
+					}}}
+			System.out.println(maxCount);
+			result.clear();
 			result.add(maxValue);
-			maxValue = 0;
-			maxCount = 0;
-			arraylist.clear();
+			return result;
+					
 		}
 		
-		return result;
-	}
 
 	private Double round(double value, int i) {
 		// TODO Auto-generated method stub
