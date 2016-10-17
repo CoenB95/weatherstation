@@ -94,24 +94,18 @@ public class IOHandler {
 				Executors.newSingleThreadScheduledExecutor();
 		service.scheduleAtFixedRate(() -> {
 			if (buttonListener == null) return;
-			if (IO.readShort(ButtonHandler.BUTTON_LEFT) >= 1) {
-				if (!left_on) {
-					left_on = true;
-					buttonListener.onButtonClicked(ButtonHandler.BUTTON_LEFT);
-				}
-			} else left_on = false;
-			if (IO.readShort(ButtonHandler.BUTTON_RIGHT) >= 1) {
-				if (!right_on) {
-					right_on = true;
-					buttonListener.onButtonClicked(ButtonHandler.BUTTON_RIGHT);
-				}
-			} else right_on = false;
-			if (IO.readShort(ButtonHandler.BUTTON_SELECT) >= 1) {
-				if (!select_on) {
-					select_on = true;
-					buttonListener.onButtonClicked(ButtonHandler.BUTTON_SELECT);
-				}
-			} else select_on = false;
+			if ((IO.readShort(ButtonHandler.BUTTON_LEFT) == 1) != left_on) {
+				left_on = !left_on;
+				buttonListener.onButtonClicked(ButtonHandler.BUTTON_LEFT);
+			}
+			if ((IO.readShort(ButtonHandler.BUTTON_RIGHT) == 1) != right_on) {
+				right_on = !right_on;
+				buttonListener.onButtonClicked(ButtonHandler.BUTTON_RIGHT);
+			}
+			if ((IO.readShort(ButtonHandler.BUTTON_SELECT) == 1) != select_on) {
+				select_on = !select_on;
+				buttonListener.onButtonClicked(ButtonHandler.BUTTON_SELECT);
+			}
 		}, 500, 50, TimeUnit.MILLISECONDS);
 	}
 	/**
@@ -202,6 +196,14 @@ public class IOHandler {
 			//System.out.println(IO.readShort(0x42 | 0x00));
 		}
 
+		public void addLine(String text) {
+			for (char x:text.toCharArray()) {
+				if (row < 3 && index < 21) IO.writeShort(0x40, x);
+			}
+			if (row < 2) IO.writeShort(0x40,'\n');
+			row++;
+		}
+		
 		public void appendText(String text) {
 			for (char x:text.toCharArray()) {
 				IO.writeShort(0x40, x);
@@ -249,8 +251,10 @@ public class IOHandler {
 		}
 
 		public void drawLine(int x1, int y1, int x2, int y2) {
-			int diff_x = x2-x1;
-			int diff_y = y2-y1;
+			int diff_x = (x2-x1);
+			int diff_y = (y2-y1);
+			diff_x += diff_x < 0 ? -1 : 1;
+			diff_y += diff_y < 0 ? -1 : 1;
 			double largest = Math.max(diff_x, diff_y);
 			for (int o = 0;o < largest;o++) {
 				IO.writeShort(0x42, (ON_CODE << CODE_POS) |

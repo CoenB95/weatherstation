@@ -1,6 +1,5 @@
 package weatherstation;
 
-import java.io.ObjectInputStream.GetField;
 import java.time.LocalDateTime;
 import weatherstation.sql.RawMeasurement;
 
