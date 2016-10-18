@@ -44,6 +44,13 @@ public class IOHandler {
 		matrixHandler = new MatrixHandler();
 		setupButtonHandler();
 	}
+	
+	public void clearAll() {
+		getMatrixHandler().clearMatrix();
+		clearNumbers(NUMBER_FIELD_1, 5);
+		clearNumbers(NUMBER_FIELD_2, 5);
+		clearNumbers(NUMBER_FIELD_3, 5);
+	}
 
 	/**
 	 * Clears the number digit at the specified address.
