@@ -89,7 +89,7 @@ public class IOHandler {
 		int mperpix =  list.size()/128;
 		int index = 0;
 		boolean lessthenmax = true;
-		if(list.size() > 127) lessthenmax = false;
+		if(mperpix > 1) lessthenmax = false;
 		
 		if(lessthenmax == false){
 			for(int i = 0; i < 128; i += (int)mperpix){
@@ -111,53 +111,6 @@ public class IOHandler {
 		System.out.println(list);
 		System.out.println(list.size());
 	}
-	
-//	public void drawGraph(List<Double> values)
-//    {     
-//        List<Integer> searchedvalues = new ArrayList<Integer>();
-//        for(double item : values){
-//            int newItem = (int) item;
-//            searchedvalues.add(newItem);
-//        }
-//        int x=0;    
-//        int length = searchedvalues.size();
-//        int max = searchedvalues.get(0);
-//        int min = searchedvalues.get(0);
-//        int count = 1;
-//        int temp=1;
-//        if(length>128){
-//            count = (((length)/128)+1);}
-//        for (int i = 1; i < searchedvalues.size(); i++) {
-//            if (searchedvalues.get(temp) > max) {
-//                max = searchedvalues.get(temp);
-//                temp++;}
-//                else{
-//                	temp++;}
-//        }
-//        temp = 1;
-//        for (int i = 1; i < searchedvalues.size(); i++) {
-//            if (searchedvalues.get(temp) < min) {
-//                min = searchedvalues.get(temp);
-//                temp++;}
-//            else{
-//            	temp++;}
-//        }   
-//        int BS=0;
-//        BS = (((max)/28)); // +1
-//        if(BS == 0) { BS = 1;  }
-//        int index=0;
-//        while(index<searchedvalues.size())
-//            { if (min<0){
-//                    int xt = (searchedvalues.get(index)-min);
-//                    matrixHandler.drawPixel(x, (30 - (xt/BS)));
-//                    x++;
-//                    index+=count;}
-//                else{
-//                    matrixHandler.drawPixel(x, (30 - (searchedvalues.get(index)/BS)));
-//                    x++;
-//                    index+=count;}
-//            }
-//      }
 
 	public void setOnButtonListener(ButtonHandler b) {
 		buttonListener = b;
