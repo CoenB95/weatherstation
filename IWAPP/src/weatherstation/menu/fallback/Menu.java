@@ -30,7 +30,7 @@ public class Menu {
 	
 	public void draw() {
 		MatrixHandler m = io.getMatrixHandler();
-		m.clearMatrix();
+		io.clearAll();
 		// Row 1
 		if (index < 0) m.addLine("");
 		else if (index > 0)

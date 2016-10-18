@@ -103,16 +103,7 @@ public class MainApp {
 						Measurement.UVLEVEL, "")),
 
 				new MenuItem("Batterij Spanning").addAll(newStatisticsMenu(
-						Measurement.BATTERYVOLTAGE, "V")),
-				new MenuItem("SunRise").setAction(() -> { 
-					iohandler.getMatrixHandler().clearMatrix();
-					iohandler.getMatrixHandler().appendText("TODO");
-				}),
-						
-				new MenuItem("SunRise").setAction(() -> { 
-					iohandler.getMatrixHandler().clearMatrix();
-					iohandler.getMatrixHandler().appendText("TODO");
-				})
+						Measurement.BATTERYVOLTAGE, "V"))
 		};
 
 		/**1st menu: the period selection.*/
@@ -140,7 +131,34 @@ public class MainApp {
 					iohandler.getMatrixHandler().appendText("laden...");
 					measurements.fetchPeriod(LocalDate.now(), 
 							LocalDate.now());
-				}).addAll(category_menu));
+				}).addAll(category_menu),
+				new MenuItem("Nu").setAction(() -> {
+					iohandler.getMatrixHandler().clearMatrix();
+					iohandler.getMatrixHandler().appendText("laden...");
+					measurements.fetchPeriod(LocalDate.now(), 
+							LocalDate.now());
+				}).addAll(
+						new MenuItem("Temperatuur").setAction(() -> {
+							iohandler.getMatrixHandler().setText(
+									"        Temp.\nMin               Max");
+							List<Measurement> temp = measurements.getAllMeasurements();
+							iohandler.writeNumber(IOHandler.NUMBER_FIELD_1,
+									temp.get(temp.size()-1).getOutsideTemperature(), false);
+							iohandler.writeNumber(IOHandler.NUMBER_FIELD_2,
+									measurements.getLowest(Measurement.TEMPERATURE_OUTSIDE)
+									.get(0), false);
+							iohandler.writeNumber(IOHandler.NUMBER_FIELD_3,
+									measurements.getHighest(Measurement.TEMPERATURE_OUTSIDE)
+									.get(0), false);
+						}),
+						new MenuItem("Zon").setAction(() -> { 
+							iohandler.getMatrixHandler().clearMatrix();
+							iohandler.getMatrixHandler().appendText("Opkomst:   " +
+									measurements.getAllMeasurements().get(0)
+									.getSunrise() + "\nOndergang: " +
+									measurements.getAllMeasurements().get(0)
+									.getSunset());
+				})));
 		menu.draw();
 
 		iohandler.setOnButtonListener(new ButtonHandler() {

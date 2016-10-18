@@ -1,14 +1,11 @@
 package weatherstation;
 
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.naming.spi.DirStateFactory.Result;
 
 import weatherstation.sql.RawMeasurement;
 import weatherstation.sql.WeatherStation;
@@ -67,6 +64,10 @@ public class Measurements {
 		measurementsPerDay.add(new ArrayList<>(measurements_of_the_day));
 	}
 
+	public List<Measurement> getAllMeasurements() {
+		return measurements;
+	}
+	
 	public double getDegreeDays() {
 		double days = 0;
 		for (double d:getAverage(Measurement.TEMPERATURE_OUTSIDE)) {
@@ -510,12 +511,6 @@ public class Measurements {
 		}
 		
 		return result;
-	}
-		
-
-	private Double round(double value, int i) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public double getHighestContinuousRainrate() {
