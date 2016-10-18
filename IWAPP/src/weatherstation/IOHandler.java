@@ -129,6 +129,21 @@ public class IOHandler {
 		}
 	}
 
+	private void writeDecimal(int address, int number) {
+		switch(number) {
+		case 0: IO.writeShort(address, 0b1_1011_1111); break;
+		case 1: IO.writeShort(address, 0b1_1000_0110); break;
+		case 2: IO.writeShort(address, 0b1_1101_1011); break;
+		case 3: IO.writeShort(address, 0b1_1100_1111); break;
+		case 4: IO.writeShort(address, 0b1_1110_0110); break;
+		case 5: IO.writeShort(address, 0b1_1110_1101); break;
+		case 6: IO.writeShort(address, 0b1_1111_1101); break;
+		case 7: IO.writeShort(address, 0b1_1000_0111); break;
+		case 8: IO.writeShort(address, 0b1_1111_1111); break;
+		case 9: IO.writeShort(address, 0b1_1110_1111); break;
+		}
+	}
+	
 	/**
 	 * Writes a number to one of the three number-fields of the app.
 	 * 
@@ -137,11 +152,22 @@ public class IOHandler {
 	 * @param number the decimal number you want to display.
 	 * @param leadingZeros pass true to show leading zeros, false otherwise.
 	 */
-	public void writeNumber(int address, int number, 
+	public void writeNumber(int address, double dec_number, 
 			boolean leadingZeros) {
+		
+		int number;
+		boolean point = false;
+		
+		if ((dec_number % 1) != 0) {
+			number = (int) (dec_number * 10);
+			point = true;
+		} else {
+			number = (int) dec_number;
+		}
+		
 		if (number < 0) throw new IllegalArgumentException(
 				"Value may not be negative, I can't handle that properly.");
-
+		
 		// Fifth number position, ten-thousands.
 		if (leadingZeros || number >= 10000)
 			IO.writeShort(address + 8, number/10000 % 10);
@@ -158,8 +184,10 @@ public class IOHandler {
 		else IO.writeShort(address + 4, CLEARED_NUMBER);
 
 		// Second number position, tens.
-		if (leadingZeros || number >= 10)
-			IO.writeShort(address + 2, number/10 % 10);
+		if (leadingZeros || number >= 10) {
+			if (point) writeDecimal(address + 2, number/10 % 10);
+			else IO.writeShort(address + 2, number/10 % 10);
+		}
 		else IO.writeShort(address + 2, CLEARED_NUMBER);
 
 		// First number position (most right), single units.
@@ -263,6 +291,12 @@ public class IOHandler {
 			}
 		}
 
+		/**Clears the matrix to replace its contents with this new text.*/
+		public void setText(String text) {
+			clearMatrix();
+			appendText(text);
+		}
+		
 		public void shiftDisplay(int x, int y) {
 			IO.writeShort(0x42, (SHIFT_CODE << CODE_POS) |
 					(-x << X_POS) | (-y << Y_POS));
