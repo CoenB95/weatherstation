@@ -14,7 +14,14 @@ import weatherstation.sql.WeatherStation;
 
 public class MainApp {
 
+	IOHandler iohandler;
+	Measurements measurements;
+	
 	public static void main(String[] args) {
+		new MainApp().mainLogic();
+	}
+	
+	public void mainLogic() {
 
 		setupConnectionWithDisplay();
 
@@ -22,49 +29,18 @@ public class MainApp {
 		//hand.io.getMatrixHandler().clearMatrix();
 		//hand.io.getMatrixHandler().appendText("Laden...");
 
-		IOHandler iohandler = new IOHandler();
+		iohandler = new IOHandler();
 
 		// Measurements: The Database Util.
 		// Pass todays date as the period we want data from (as a test).
-		Measurements measurements = new Measurements();
+		measurements = new Measurements();
 
-		//2nd menu
-		MenuItem[] inner = 
-			{
-				
-				new MenuItem("Luchtdruk").addAll(
-						new MenuItem("Hoogste").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getHighest(Measurement.BAROMETER)) + " Hpa");
-						}),
-						new MenuItem("Laagste").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getLowest(Measurement.BAROMETER)) + " Hpa");
-						}),
-						new MenuItem("Modus").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getModus(Measurement.BAROMETER)) + " Hpa");
-						}),
-						new MenuItem("Mediaan").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getMedian(Measurement.BAROMETER)) + " Hpa");
-						}),
-						new MenuItem("Gemiddelde").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getAverage(Measurement.BAROMETER)) + " Hpa");
-						}),
-						new MenuItem("standaarddeviatie").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getAverage(Measurement.BAROMETER)) + " Hpa");
-					})),
-				
-					new MenuItem("Buitentemperatuur").addAll(
+		/**2nd level menu: the category selection*/
+		MenuItem[] category_menu = {				
+				new MenuItem("Luchtdruk").addAll(newStatisticsMenu(
+						Measurement.BAROMETER, "Hpa")),
+
+				new MenuItem("Buitentemperatuur").addAll(
 						new MenuItem("Hittegolf").setAction(() -> {
 							iohandler.getMatrixHandler().clearMatrix();
 							iohandler.getMatrixHandler().appendText(
@@ -84,373 +60,87 @@ public class MainApp {
 							iohandler.getMatrixHandler().clearMatrix();
 							Period p = measurements.getLongestPeriodWithMoreThan(25, Measurement.TEMPERATURE_OUTSIDE);
 							iohandler.getMatrixHandler().appendText(p.getStartDate() + "\ntot\n" + p.getEndDate());
-						}),
-							new MenuItem("Hoogste").setAction(() -> {
-								iohandler.getMatrixHandler().clearMatrix();
-								iohandler.getMatrixHandler().appendText(printList(
-										measurements.getHighest(Measurement.TEMPERATURE_OUTSIDE)) + " graden");
-							}),
-							new MenuItem("Laagste").setAction(() -> {
-								iohandler.getMatrixHandler().clearMatrix();
-								iohandler.getMatrixHandler().appendText(printList(
-										measurements.getLowest(Measurement.TEMPERATURE_OUTSIDE)) + " graden");
-							}),
-							new MenuItem("Modus").setAction(() -> {
-								iohandler.getMatrixHandler().clearMatrix();
-								iohandler.getMatrixHandler().appendText(printList(
-										measurements.getModus(Measurement.TEMPERATURE_OUTSIDE)) + " graden");
-							}),
-							new MenuItem("Mediaan").setAction(() -> {
-								iohandler.getMatrixHandler().clearMatrix();
-								iohandler.getMatrixHandler().appendText(printList(
-										measurements.getMedian(Measurement.TEMPERATURE_OUTSIDE)) + " graden");
-							}),
-							new MenuItem("Gemiddelde").setAction(() -> {
-								iohandler.getMatrixHandler().clearMatrix();
-								iohandler.getMatrixHandler().appendText(printList(
-										measurements.getAverage(Measurement.TEMPERATURE_OUTSIDE)) + " graden");
-							}),
-							new MenuItem("standaarddeviatie").setAction(() -> {
-								iohandler.getMatrixHandler().clearMatrix();
-								iohandler.getMatrixHandler().appendText(printList(
-										measurements.getAverage(Measurement.TEMPERATURE_OUTSIDE)) + " graden");
-						})),
-				new MenuItem("Binnentemperatuur").addAll(
-							new MenuItem("Hoogste").setAction(() -> {
-								iohandler.getMatrixHandler().clearMatrix();
-								iohandler.getMatrixHandler().appendText(printList(
-										measurements.getHighest(Measurement.TEMPERATURE_INSIDE)) + " graden");
-							}),
-							new MenuItem("Laagste").setAction(() -> {
-								iohandler.getMatrixHandler().clearMatrix();
-								iohandler.getMatrixHandler().appendText(printList(
-										measurements.getLowest(Measurement.TEMPERATURE_INSIDE)) + " graden");
-							}),
-							new MenuItem("Modus").setAction(() -> {
-								iohandler.getMatrixHandler().clearMatrix();
-								iohandler.getMatrixHandler().appendText(printList(
-										measurements.getModus(Measurement.TEMPERATURE_INSIDE)) + " graden");
-							}),
-							new MenuItem("Mediaan").setAction(() -> {
-								iohandler.getMatrixHandler().clearMatrix();
-								iohandler.getMatrixHandler().appendText(printList(
-										measurements.getMedian(Measurement.TEMPERATURE_INSIDE)) + " graden");
-							}),
-							new MenuItem("Gemiddelde").setAction(() -> {
-								iohandler.getMatrixHandler().clearMatrix();
-								iohandler.getMatrixHandler().appendText(printList(
-										measurements.getAverage(Measurement.TEMPERATURE_INSIDE)) + " graden");
-							}),
-							new MenuItem("standaarddeviatie").setAction(() -> {
-								iohandler.getMatrixHandler().clearMatrix();
-								iohandler.getMatrixHandler().appendText(printList(
-										measurements.getAverage(Measurement.TEMPERATURE_INSIDE)) + " graden");
-						})),
-				
-				new MenuItem("vochtigheid buiten").addAll(
-						new MenuItem("Hoogste").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getHighest(Measurement.HUMIDITY_OUTSIDE)) + " %");
-						}),
-						new MenuItem("Laagste").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getLowest(Measurement.HUMIDITY_OUTSIDE)) + " %");
-						}),
-						new MenuItem("Modus").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getModus(Measurement.HUMIDITY_OUTSIDE)) + " %");
-						}),
-						new MenuItem("Mediaan").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getMedian(Measurement.HUMIDITY_OUTSIDE)) + " %");
-						}),
-						new MenuItem("Gemiddelde").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getAverage(Measurement.HUMIDITY_OUTSIDE)) + " %");
-						}),
-						new MenuItem("standaarddeviatie").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getAverage(Measurement.HUMIDITY_OUTSIDE)) + " %");
-					})),
-				
-				new MenuItem("vochtigheid binnen").addAll(
-						new MenuItem("Hoogste").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getHighest(Measurement.HUMIDITY_INSIDE)) + " %");
-						}),
-						new MenuItem("Laagste").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getLowest(Measurement.HUMIDITY_INSIDE)) + " %");
-						}),
-						new MenuItem("Modus").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getModus(Measurement.HUMIDITY_INSIDE)) + " %");
-						}),
-						new MenuItem("Mediaan").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getMedian(Measurement.HUMIDITY_INSIDE)) + " %");
-						}),
-						new MenuItem("Gemiddelde").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getAverage(Measurement.HUMIDITY_INSIDE)) + " %");
-						}),
-						new MenuItem("standaarddeviatie").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getAverage(Measurement.HUMIDITY_INSIDE)) + " %");
-					})),
-				
-				new MenuItem("windsnelheid").addAll(
-						new MenuItem("Hoogste").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getHighest(Measurement.WINDSPEED)) + " km/h");
-						}),
-						new MenuItem("Laagste").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getLowest(Measurement.WINDSPEED)) + " km/h");
-						}),
-						new MenuItem("Modus").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getModus(Measurement.WINDSPEED)) + " km/h");
-						}),
-						new MenuItem("Mediaan").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getMedian(Measurement.WINDSPEED)) + " km/h");
-						}),
-						new MenuItem("Gemiddelde").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getAverage(Measurement.WINDSPEED)) + " km/h");
-						}),
-						new MenuItem("standaarddeviatie").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(printList(
-									measurements.getAverage(Measurement.WINDSPEED)) + " km/h");
-					})),
-				
+						}))
+				.addAll(newStatisticsMenu(Measurement.TEMPERATURE_OUTSIDE, 
+						"*C")),
+				new MenuItem("Binnentemperatuur").addAll(newStatisticsMenu(
+						Measurement.TEMPERATURE_INSIDE, "*C")),
+
+				new MenuItem("Vochtigheid Buiten").addAll(newStatisticsMenu(
+						Measurement.HUMIDITY_OUTSIDE, "%")),
+
+				new MenuItem("vochtigheid binnen").addAll(newStatisticsMenu(
+						Measurement.HUMIDITY_INSIDE, "%")),
+
+				new MenuItem("windsnelheid").addAll(newStatisticsMenu(
+						Measurement.WINDSPEED, "km/h")),
+
 				new MenuItem("Neerslag").addAll(
-					new IntegerMenuItem("Langste droogte", 0, 10, (i) -> {
-					//).setAction(() -> {
-						iohandler.getMatrixHandler().clearMatrix();
-						Period p = measurements.getLongestDurationWithLessThan(
-							i, Measurement.RAINRATE);
-						iohandler.getMatrixHandler().appendText(
-							p.getStartDate() + "\ntot\n" + p.getEndDate());
+						new IntegerMenuItem("Langste droogte", 0, 10, (i) -> {
+							//).setAction(() -> {
+							iohandler.getMatrixHandler().clearMatrix();
+							Period p = measurements.getLongestDurationWithLessThan(
+									i, Measurement.RAINRATE);
+							iohandler.getMatrixHandler().appendText(
+									p.getStartDate() + "\ntot\n" + p.getEndDate());
 						}),
-					new IntegerMenuItem("Langste natte periode", 0, 10, (i) -> {
-					//.setAction(() -> {
-						iohandler.getMatrixHandler().clearMatrix();
-						Period p = measurements.getLongestDurationWithMoreThan(
-							i, Measurement.RAINRATE);
-						iohandler.getMatrixHandler().appendText(
-							p.getStartDate() + "\ntot\n" + p.getEndDate());
+						new IntegerMenuItem("Langste natte periode", 0, 10, (i) -> {
+							//.setAction(() -> {
+							iohandler.getMatrixHandler().clearMatrix();
+							Period p = measurements.getLongestDurationWithMoreThan(
+									i, Measurement.RAINRATE);
+							iohandler.getMatrixHandler().appendText(
+									p.getStartDate() + "\ntot\n" + p.getEndDate());
 						}),
-					new MenuItem("Meeste aaneengesloten").setAction(() -> {
-						iohandler.getMatrixHandler().clearMatrix();
-						double d = measurements.getHighestContinuousRainrate();
-						iohandler.getMatrixHandler().appendText(
-							d + " mm");
-						}),
-					new MenuItem("Hoogste").setAction(() -> {
-						iohandler.getMatrixHandler().clearMatrix();
-						iohandler.getMatrixHandler().appendText(printList(
-								measurements.getHighest(Measurement.RAINRATE)) + " mm");
-					}),
-					new MenuItem("Laagste").setAction(() -> {
-						iohandler.getMatrixHandler().clearMatrix();
-						iohandler.getMatrixHandler().appendText(printList(
-								measurements.getLowest(Measurement.RAINRATE)) + " mm");
-					}),
-					new MenuItem("Modus").setAction(() -> {
-						iohandler.getMatrixHandler().clearMatrix();
-						iohandler.getMatrixHandler().appendText(printList(
-								measurements.getModus(Measurement.RAINRATE)) + " mm");
-					}),
-					new MenuItem("Mediaan").setAction(() -> {
-						iohandler.getMatrixHandler().clearMatrix();
-						iohandler.getMatrixHandler().appendText(printList(
-								measurements.getMedian(Measurement.RAINRATE)) + " mm");
-					}),
-					new MenuItem("Gemiddelde").setAction(() -> {
-						iohandler.getMatrixHandler().clearMatrix();
-						iohandler.getMatrixHandler().appendText(printList(
-								measurements.getAverage(Measurement.RAINRATE)) + " mm");
-					}),
-					new MenuItem("standaarddeviatie").setAction(() -> {
-						iohandler.getMatrixHandler().clearMatrix();
-						iohandler.getMatrixHandler().appendText(printList(
-								measurements.getAverage(Measurement.RAINRATE)) + " mm");
-				})),
+						new MenuItem("Meeste aaneengesloten").setAction(() -> {
+							iohandler.getMatrixHandler().clearMatrix();
+							double d = measurements.getHighestContinuousRainrate();
+							iohandler.getMatrixHandler().appendText(
+									d + " mm");
+						})),
 
-			
-			new MenuItem("UV-index").addAll(
-					new MenuItem("Hoogste").setAction(() -> {
-						iohandler.getMatrixHandler().clearMatrix();
-						iohandler.getMatrixHandler().appendText(printList(
-								measurements.getHighest(Measurement.UVLEVEL)) + " ");
-					}),
-					new MenuItem("Laagste").setAction(() -> {
-						iohandler.getMatrixHandler().clearMatrix();
-						iohandler.getMatrixHandler().appendText(printList(
-								measurements.getLowest(Measurement.UVLEVEL)) + " ");
-					}),
-					new MenuItem("Modus").setAction(() -> {
-						iohandler.getMatrixHandler().clearMatrix();
-						iohandler.getMatrixHandler().appendText(printList(
-								measurements.getModus(Measurement.UVLEVEL)) + " ");
-					}),
-					new MenuItem("Mediaan").setAction(() -> {
-						iohandler.getMatrixHandler().clearMatrix();
-						iohandler.getMatrixHandler().appendText(printList(
-								measurements.getMedian(Measurement.UVLEVEL)) + " ");
-					}),
-					new MenuItem("Gemiddelde").setAction(() -> {
-						iohandler.getMatrixHandler().clearMatrix();
-						iohandler.getMatrixHandler().appendText(printList(
-								measurements.getAverage(Measurement.UVLEVEL)) + " ");
-					}),
-					new MenuItem("standaarddeviatie").setAction(() -> {
-						iohandler.getMatrixHandler().clearMatrix();
-						iohandler.getMatrixHandler().appendText(printList(
-								measurements.getAverage(Measurement.UVLEVEL)) + " ");
-				})),
-		
-		new MenuItem("BatterijSpannig").addAll(
-				new MenuItem("Hoogste").setAction(() -> {
-					iohandler.getMatrixHandler().clearMatrix();
-					iohandler.getMatrixHandler().appendText(printList(
-							measurements.getHighest(Measurement.BATTERYVOLTAGE)) + " V");
-				}),
-				new MenuItem("Laagste").setAction(() -> {
-					iohandler.getMatrixHandler().clearMatrix();
-					iohandler.getMatrixHandler().appendText(printList(
-							measurements.getLowest(Measurement.BATTERYVOLTAGE)) + " V");
-				}),
-				new MenuItem("Modus").setAction(() -> {
-					iohandler.getMatrixHandler().clearMatrix();
-					iohandler.getMatrixHandler().appendText(printList(
-							measurements.getModus(Measurement.BATTERYVOLTAGE)) + " V");
-				}),
-				new MenuItem("Mediaan").setAction(() -> {
-					iohandler.getMatrixHandler().clearMatrix();
-					iohandler.getMatrixHandler().appendText(printList(
-							measurements.getMedian(Measurement.BATTERYVOLTAGE)) + " V");
-				}),
-				new MenuItem("Gemiddelde").setAction(() -> {
-					iohandler.getMatrixHandler().clearMatrix();
-					iohandler.getMatrixHandler().appendText(printList(
-							measurements.getAverage(Measurement.BATTERYVOLTAGE)) + " V");
-				}),
-				new MenuItem("standaarddeviatie").setAction(() -> {
-					iohandler.getMatrixHandler().clearMatrix();
-					iohandler.getMatrixHandler().appendText(printList(
-							measurements.getAverage(Measurement.BATTERYVOLTAGE)) + " V");
-			})),
-		new MenuItem("SunRise").addAll(
-				new MenuItem("Hoogste").setAction(() -> {
-					iohandler.getMatrixHandler().clearMatrix();
-					iohandler.getMatrixHandler().appendText(printList(
-							measurements.getHighest(Measurement.SUNRISE)) + " ");
-				}),
-				new MenuItem("Laagste").setAction(() -> {
-					iohandler.getMatrixHandler().clearMatrix();
-					iohandler.getMatrixHandler().appendText(printList(
-							measurements.getLowest(Measurement.SUNRISE)) + " ");
-				}),
-				new MenuItem("Modus").setAction(() -> {
-					iohandler.getMatrixHandler().clearMatrix();
-					iohandler.getMatrixHandler().appendText(printList(
-							measurements.getModus(Measurement.SUNRISE)) + " ");
-				}),
-				new MenuItem("Mediaan").setAction(() -> {
-					iohandler.getMatrixHandler().clearMatrix();
-					iohandler.getMatrixHandler().appendText(printList(
-							measurements.getMedian(Measurement.SUNRISE)) + " ");
-				}),
-				new MenuItem("Gemiddelde").setAction(() -> {
-					iohandler.getMatrixHandler().clearMatrix();
-					iohandler.getMatrixHandler().appendText(printList(
-							measurements.getAverage(Measurement.SUNRISE)) + " ");
-				}),
-				new MenuItem("standaarddeviatie").setAction(() -> {
-					iohandler.getMatrixHandler().clearMatrix();
-					iohandler.getMatrixHandler().appendText(printList(
-							measurements.getAverage(Measurement.SUNRISE)) + " ");
-			})),
-		
-		new MenuItem("SunSet").addAll(
-				new MenuItem("Hoogste").setAction(() -> {
-					iohandler.getMatrixHandler().clearMatrix();
-					iohandler.getMatrixHandler().appendText(printList(
-							measurements.getHighest(Measurement.SUNSET)) + " ");
-				}),
-				new MenuItem("Laagste").setAction(() -> {
-					iohandler.getMatrixHandler().clearMatrix();
-					iohandler.getMatrixHandler().appendText(printList(
-							measurements.getLowest(Measurement.SUNSET)) + " ");
-				}),
-				new MenuItem("Modus").setAction(() -> {
-					iohandler.getMatrixHandler().clearMatrix();
-					iohandler.getMatrixHandler().appendText(printList(
-							measurements.getModus(Measurement.SUNSET)) + " ");
-				}),
-				new MenuItem("Mediaan").setAction(() -> {
-					iohandler.getMatrixHandler().clearMatrix();
-					iohandler.getMatrixHandler().appendText(printList(
-							measurements.getMedian(Measurement.SUNSET)) + " ");
-				}),
-				new MenuItem("Gemiddelde").setAction(() -> {
-					iohandler.getMatrixHandler().clearMatrix();
-					iohandler.getMatrixHandler().appendText(printList(
-							measurements.getAverage(Measurement.SUNSET)) + " ");
-				}),
-				new MenuItem("standaarddeviatie").setAction(() -> {
-					iohandler.getMatrixHandler().clearMatrix();
-					iohandler.getMatrixHandler().appendText(printList(
-							measurements.getAverage(Measurement.SUNSET)) + " ");
-			}))};
+				new MenuItem("UV-index").addAll(newStatisticsMenu(
+						Measurement.UVLEVEL, "")),
 
-		//1st menu
+				new MenuItem("Batterij Spanning").addAll(newStatisticsMenu(
+						Measurement.BATTERYVOLTAGE, "V")),
+				new MenuItem("SunRise").setAction(() -> { 
+					iohandler.getMatrixHandler().clearMatrix();
+					iohandler.getMatrixHandler().appendText("TODO");
+				}),
+						
+				new MenuItem("SunRise").setAction(() -> { 
+					iohandler.getMatrixHandler().clearMatrix();
+					iohandler.getMatrixHandler().appendText("TODO");
+				})
+		};
+
+		/**1st menu: the period selection.*/
 		Menu menu = new Menu(iohandler, "Periode:",
 				new MenuItem("Alle metingen").setAction(() -> {
 					iohandler.getMatrixHandler().clearMatrix();
 					iohandler.getMatrixHandler().appendText("laden...");
 					measurements.fetchPeriod(LocalDate.now().minusYears(8), 
 							LocalDate.now());
-				}).addAll(inner),
+				}).addAll(category_menu),
 				new MenuItem("Afgelopen jaar").setAction(() -> {
 					iohandler.getMatrixHandler().clearMatrix();
 					iohandler.getMatrixHandler().appendText("laden...");
 					measurements.fetchPeriod(LocalDate.now().minusYears(1), 
 							LocalDate.now());
-				}).addAll(inner),
+				}).addAll(category_menu),
 				new MenuItem("Afgelopen maand").setAction(() -> {
 					iohandler.getMatrixHandler().clearMatrix();
 					iohandler.getMatrixHandler().appendText("laden...");
 					measurements.fetchPeriod(LocalDate.now().minusMonths(1), 
 							LocalDate.now());
-				}).addAll(inner),
+				}).addAll(category_menu),
 				new MenuItem("Vandaag").setAction(() -> {
 					iohandler.getMatrixHandler().clearMatrix();
 					iohandler.getMatrixHandler().appendText("laden...");
 					measurements.fetchPeriod(LocalDate.now(), 
 							LocalDate.now());
-				}).addAll(inner));
+				}).addAll(category_menu));
 		menu.draw();
 
 		iohandler.setOnButtonListener(new ButtonHandler() {
@@ -468,6 +158,42 @@ public class MainApp {
 				}
 			}
 		});
+	}
+
+	/**3rd level menu creator. Makes the statistics menu (double-only).*/
+	public MenuItem[] newStatisticsMenu(int field, String text) {
+		return new MenuItem[] {
+			new MenuItem("Hoogste").setAction(() -> {
+				iohandler.getMatrixHandler().clearMatrix();
+				iohandler.getMatrixHandler().appendText(printList(
+						measurements.getHighest(field)) + " " + text);
+			}),
+			new MenuItem("Laagste").setAction(() -> {
+				iohandler.getMatrixHandler().clearMatrix();
+				iohandler.getMatrixHandler().appendText(printList(
+						measurements.getLowest(field)) + " " + text);
+			}),
+			new MenuItem("Modus").setAction(() -> {
+				iohandler.getMatrixHandler().clearMatrix();
+				iohandler.getMatrixHandler().appendText(printList(
+						measurements.getModus(field)) + " " + text);
+			}),
+			new MenuItem("Mediaan").setAction(() -> {
+				iohandler.getMatrixHandler().clearMatrix();
+				iohandler.getMatrixHandler().appendText(printList(
+						measurements.getMedian(field)) + " " + text);
+			}),
+			new MenuItem("Gemiddelde").setAction(() -> {
+				iohandler.getMatrixHandler().clearMatrix();
+				iohandler.getMatrixHandler().appendText(printList(
+						measurements.getAverage(field)) + " " + text);
+			}),
+			new MenuItem("Standaard Deviatie").setAction(() -> {
+				iohandler.getMatrixHandler().clearMatrix();
+				iohandler.getMatrixHandler().appendText(
+						measurements.getStandardDeviation(field) + " " + text);
+			})
+		};
 	}
 
 	/**Starts the wsDisplay.jar and monitors it. When that application
@@ -498,7 +224,7 @@ public class MainApp {
 			return real;
 		} else return null;
 	}
-	
+
 	public static String printList(List<Double> list) {
 		String s = "";
 		for (Double d : list) {
