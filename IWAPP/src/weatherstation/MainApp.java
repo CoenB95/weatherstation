@@ -47,9 +47,8 @@ public class MainApp {
 									measurements.hadHeatwave() ? "Ja" : "Nee");
 						}),
 						new MenuItem("Graaddagen").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText(
-									measurements.getDegreeDays() + " graaddagen");
+							iohandler.getMatrixHandler().setText(String.format(
+									"%.1f graaddagen", measurements.getDegreeDays()));
 						}),
 						new MenuItem("Langste stijging").setAction(() -> {
 							iohandler.getMatrixHandler().clearMatrix();
@@ -141,9 +140,9 @@ public class MainApp {
 						new MenuItem("Temperatuur").setAction(() -> {
 							iohandler.getMatrixHandler().setText(
 									"        Temp.\nMin               Max");
-							List<Measurement> temp = measurements.getAllMeasurements();
 							iohandler.writeNumber(IOHandler.NUMBER_FIELD_1,
-									temp.get(temp.size()-1).getOutsideTemperature(), false);
+									measurements.getLatestMeasurement()
+									.getOutsideTemperature(), false);
 							iohandler.writeNumber(IOHandler.NUMBER_FIELD_2,
 									measurements.getLowest(Measurement.TEMPERATURE_OUTSIDE)
 									.get(0), false);
@@ -152,13 +151,24 @@ public class MainApp {
 									.get(0), false);
 						}),
 						new MenuItem("Zon").setAction(() -> { 
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText("Opkomst:   " +
+							iohandler.getMatrixHandler().setText("Opkomst:   " +
 									measurements.getAllMeasurements().get(0)
 									.getSunrise() + "\nOndergang: " +
 									measurements.getAllMeasurements().get(0)
 									.getSunset());
-				})));
+						}),
+						new MenuItem("Windrichting").setAction(() -> {
+							iohandler.getMatrixHandler().setText(
+									measurements.getLatestMeasurement()
+									.getWindDirection() + "*");
+						}),
+						new MenuItem("Custom").setAction(() -> {
+							iohandler.getMatrixHandler().clearMatrix();
+							iohandler.getMatrixHandler().appendText("laden...");
+							measurements.fetchPeriod(LocalDate.now(), 
+									LocalDate.now());
+						}).addAll(category_menu)
+						));
 		menu.draw();
 
 		iohandler.setOnButtonListener(new ButtonHandler() {

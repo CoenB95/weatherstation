@@ -28,7 +28,6 @@ public class MenuItem {
 	
 	public MenuItem addAll(Collection<? extends MenuItem> items) {
 		for (MenuItem item:items) item.parent = this;
-		this.items.clear();
 		this.items.addAll(items);
 		return this;
 	}

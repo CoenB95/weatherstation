@@ -68,6 +68,10 @@ public class Measurements {
 		return measurements;
 	}
 	
+	public Measurement getLatestMeasurement() {
+		return measurements.get(measurements.size() - 1);
+	}
+	
 	public double getDegreeDays() {
 		double days = 0;
 		for (double d:getAverage(Measurement.TEMPERATURE_OUTSIDE)) {
