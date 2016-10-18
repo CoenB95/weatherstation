@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.naming.spi.DirStateFactory.Result;
@@ -94,11 +95,10 @@ public class Measurements {
 	 */
 	public List<Double> getHighest(int field) {
 		List<Double> result = new ArrayList<>();
-		for (List<Measurement> ms:measurementsPerDay) {
-			if (ms.isEmpty()) break;
-			for (Measurement m:ms) {
-				result.add(m.getDouble(field));
-			}}
+		if (measurements.isEmpty()) return result;
+		for (Measurement m:measurements) {
+			result.add(m.getDouble(field));
+		}
 		int amount = result.size(); 
 			int x = 0;
 			double max = -300.0;
@@ -126,11 +126,10 @@ public class Measurements {
 		
 	public List<Double> getLowest(int field) {
 		List<Double> result = new ArrayList<>();
-		for (List<Measurement> ms:measurementsPerDay) {
-			if (ms.isEmpty()) break;
-			for (Measurement m:ms) {
-				result.add(m.getDouble(field));
-			}}
+		if (measurements.isEmpty()) return result;
+		for (Measurement m:measurements) {
+			result.add(m.getDouble(field));
+		}
 		int amount = result.size(); 
 			int x = 0;
 			double min = 300.0;
@@ -172,11 +171,10 @@ public class Measurements {
 	 */
 	public List<Double> getAverage(int field) {
 		List<Double> result = new ArrayList<>();
-		for (List<Measurement> ms:measurementsPerDay) {
-			if (ms.isEmpty()) break;
-			for (Measurement m:ms) {
-				result.add(m.getDouble(field));
-			}}
+		if (measurements.isEmpty()) return result;
+		for (Measurement m:measurements) {
+			result.add(m.getDouble(field));
+		}
 		double avg = 0;
 		int total = 0;
 		int amound = result.size();
@@ -207,33 +205,45 @@ public class Measurements {
 	
 	public List<Double> getMedian(int field) {
 		List<Double> result = new ArrayList<>();
+		if (measurements.isEmpty()) return result;
+		for (Measurement m:measurements) {
+			result.add(m.getDouble(field));
+		}
+		List<Double> list = new ArrayList<>();
+		for(Measurement m:measurements) list.add(m.getDouble(field));
+		Collections.sort(list);
+		Double value;
+		int middle = list.size()/2;
+		if (list.size()%2 == 1) 
+			value = list.get(middle);
+		value = (list.get(middle-1) + list.get(middle)) / 2.0;
+		if(value != null){
+			result.clear();
+			result.add(value);
+		}
+		return result;
+		}
+		
+	
+	
+	public List<Double> getMedianDaily(int field) {
+		List<Double> result = new ArrayList<>();
 		for (List<Measurement> ms:measurementsPerDay) {
 			if (ms.isEmpty()) break;
+			List<Double> list = new ArrayList<>();
+			for(Measurement m:ms) list.add(m.getDouble(field));
+			Collections.sort(list);
 			Double value;
-			int middle = ms.size()/2;
-			if (ms.size()%2 == 1) 
-				value = ms.get(middle).getDouble(field);
-			value = (ms.get(middle-1).getDouble(field) + ms.get(middle).getDouble(field)) / 2.0;
+			int middle = list.size()/2;
+			if (list.size()%2 == 1) 
+				value = list.get(middle);
+			value = (list.get(middle-1) + list.get(middle)) / 2.0;
 			if(value != null) 
 				result.add(value);
 		}
 		return result;
 	}
 	
-	public List<Double> getMedianDaily(int field) {
-		List<Double> result = new ArrayList<>();
-		for (List<Measurement> ms:measurementsPerDay) {
-			if (ms.isEmpty()) break;
-			Double value;
-			int middle = ms.size()/2;
-			if (ms.size()%2 == 1) 
-				value = ms.get(middle).getDouble(field);
-			value = (ms.get(middle-1).getDouble(field) + ms.get(middle).getDouble(field)) / 2.0;
-			if(value != null) 
-				result.add(value);
-		}
-		return result;
-	}
 	
 	/**
 	 * Find the longest day-period wherein a certain field's value stays above
@@ -440,15 +450,12 @@ public class Measurements {
 	
 	public List<Double> getModus(int field) {
 		List<Double> result = new ArrayList<>();
-		for (List<Measurement> ms:measurementsPerDay) {
-			if (ms.isEmpty()) break;
-			for (Measurement m:ms) {
-				result.add((double) Math.round(m.getDouble(field)));
-			}}
-		System.out.println(result);
+		if (measurements.isEmpty()) return result;
+		for (Measurement m:measurements) {
+			result.add(m.getDouble(field));
+		}
 			int maxCount = 0;
 			double maxValue = 0;
-			
 			for(int i = 0; i < result.size(); ++i){
 				double value = result.get(i);
 				int count = 0;
@@ -462,7 +469,7 @@ public class Measurements {
 						maxCount = count;
 						maxValue = result.get(i);
 					}}}
-			System.out.println(maxCount);
+
 			result.clear();
 			result.add(maxValue);
 			return result;
@@ -478,12 +485,15 @@ public class Measurements {
 			if (ms.isEmpty()) break;
 			double value = ms.get(0).getDouble(field);
 			for (Measurement m:ms) {
-				arraylist.add(value* 100 / 100.00);
+				arraylist.add((double) Math.round(value));
 				}
 			for(int i = 0; i < arraylist.size(); ++i){
+				double value1 = result.get(i);
 				int count = 0;
-				for(int j = 0; j < arraylist.size(); ++j){
-					if (arraylist.get(j) == arraylist.get(i)){
+				for(int j = i; j < arraylist.size(); ++j){
+					double value2 = result.get(j);
+					if (value2 == value1){
+						result.remove(j);
 						++count;
 					}
 					if (count > maxCount){
