@@ -1,7 +1,10 @@
 package weatherstation.menu.fallback;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+
 import weatherstation.IOHandler;
 import weatherstation.IOHandler.MatrixHandler;
 
@@ -9,6 +12,7 @@ public class Menu {
 
 	private IOHandler io;
 	private MenuItem currentMenu;
+	private List<MenuItem> menuStack;
 	private int index = -1;
 	private boolean inAction = false;
 	
@@ -18,6 +22,7 @@ public class Menu {
 	
 	public Menu(IOHandler h, String title, Collection<? extends MenuItem> baseItems) {
 		io = h;
+		menuStack = new ArrayList<>();
 		currentMenu = new MenuItem(title).addAll(baseItems);
 		currentMenu.setBackAllowed(false);
 		index = currentMenu.hasIndex(0) ? 0 : -1;
@@ -86,8 +91,15 @@ public class Menu {
 			}
 		}
 		if (!currentMenu.getItem(index).isEmpty()) {
-			currentMenu = currentMenu.getItem(index);
-			index = currentMenu.hasIndex(0) ? 0 : -1;
+			if (currentMenu.isBackIndex(index)) {
+				currentMenu = menuStack.get(menuStack.size() - 1);
+				menuStack.remove(menuStack.size() - 1);
+				index = 0;
+			} else {
+				menuStack.add(currentMenu);
+				currentMenu = currentMenu.getItem(index);
+				index = 0;
+			}
 			draw();
 		}
 	}
