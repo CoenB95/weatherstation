@@ -3,7 +3,10 @@ package weatherstation;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Scanner;
 
 import weatherstation.IOHandler.ButtonHandler;
 import weatherstation.menu.fallback.IntegerMenuItem;
@@ -34,6 +37,34 @@ public class MainApp {
 		// Measurements: The Database Util.
 		// Pass todays date as the period we want data from (as a test).
 		measurements = new Measurements();
+
+		MenuItem[] category_one_day_menu = {
+				new MenuItem("Temperatuur").setAction(() -> {
+					iohandler.getMatrixHandler().setText(
+							"        Temp.\nMin               Max");
+					iohandler.writeNumber(IOHandler.NUMBER_FIELD_1,
+							measurements.getLatestMeasurement()
+							.getOutsideTemperature(), false);
+					iohandler.writeNumber(IOHandler.NUMBER_FIELD_2,
+							measurements.getLowest(Measurement.TEMPERATURE_OUTSIDE)
+							.get(0), false);
+					iohandler.writeNumber(IOHandler.NUMBER_FIELD_3,
+							measurements.getHighest(Measurement.TEMPERATURE_OUTSIDE)
+							.get(0), false);
+				}),
+				new MenuItem("Zon").setAction(() -> { 
+					iohandler.getMatrixHandler().setText("Opkomst:   " +
+							measurements.getAllMeasurements().get(0)
+							.getSunrise() + "\nOndergang: " +
+							measurements.getAllMeasurements().get(0)
+							.getSunset());
+				}),
+				new MenuItem("Windrichting").setAction(() -> {
+					iohandler.getMatrixHandler().setText(
+							measurements.getLatestMeasurement()
+							.getWindDirection() + "*");
+				})
+		};
 
 		/**2nd level menu: the category selection*/
 		MenuItem[] category_menu = {				
@@ -136,39 +167,25 @@ public class MainApp {
 					iohandler.getMatrixHandler().appendText("laden...");
 					measurements.fetchPeriod(LocalDate.now(), 
 							LocalDate.now());
-				}).addAll(
-						new MenuItem("Temperatuur").setAction(() -> {
-							iohandler.getMatrixHandler().setText(
-									"        Temp.\nMin               Max");
-							iohandler.writeNumber(IOHandler.NUMBER_FIELD_1,
-									measurements.getLatestMeasurement()
-									.getOutsideTemperature(), false);
-							iohandler.writeNumber(IOHandler.NUMBER_FIELD_2,
-									measurements.getLowest(Measurement.TEMPERATURE_OUTSIDE)
-									.get(0), false);
-							iohandler.writeNumber(IOHandler.NUMBER_FIELD_3,
-									measurements.getHighest(Measurement.TEMPERATURE_OUTSIDE)
-									.get(0), false);
-						}),
-						new MenuItem("Zon").setAction(() -> { 
-							iohandler.getMatrixHandler().setText("Opkomst:   " +
-									measurements.getAllMeasurements().get(0)
-									.getSunrise() + "\nOndergang: " +
-									measurements.getAllMeasurements().get(0)
-									.getSunset());
-						}),
-						new MenuItem("Windrichting").setAction(() -> {
-							iohandler.getMatrixHandler().setText(
-									measurements.getLatestMeasurement()
-									.getWindDirection() + "*");
-						}),
-						new MenuItem("Custom").setAction(() -> {
-							iohandler.getMatrixHandler().clearMatrix();
-							iohandler.getMatrixHandler().appendText("laden...");
-							measurements.fetchPeriod(LocalDate.now(), 
-									LocalDate.now());
-						}).addAll(category_menu)
-						));
+				}).addAll(category_one_day_menu),
+				new MenuItem("Custom").setAction(() -> {
+					iohandler.getMatrixHandler().setText("Voer datum in via\nconsole\n");
+					Scanner s = new Scanner(System.in);
+					LocalDate date = LocalDate.now();
+					try {
+						date = LocalDate.parse(s.nextLine(),
+								DateTimeFormatter.ofPattern("d-M-u"));
+					} catch (DateTimeParseException e) {
+						e.printStackTrace();
+						iohandler.getMatrixHandler().setText("Kan hier geen datum "
+								+ "uithalen\n");
+						IO.delay(2000);
+					}
+					s.close();
+					iohandler.getMatrixHandler().addLine(date + " laden...");
+					measurements.fetchPeriod(date, date);
+				}).addAll(category_one_day_menu)
+				);
 		menu.draw();
 
 		iohandler.setOnButtonListener(new ButtonHandler() {
