@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Scanner;
 
 import weatherstation.IOHandler.ButtonHandler;
-import weatherstation.menu.fallback.IntegerMenuItem;
 import weatherstation.menu.fallback.Menu;
 import weatherstation.menu.fallback.MenuItem;
 import weatherstation.sql.RawMeasurement;
@@ -106,7 +105,7 @@ public class MainApp {
 						Measurement.WINDSPEED, "km/h")),
 
 				new MenuItem("Neerslag").addAll(
-						new IntegerMenuItem("Langste droogte", 0, 10, (i) -> {
+						new MenuItem("Langste droogte", 0, 10, (i) -> {
 							//).setAction(() -> {
 							iohandler.getMatrixHandler().clearMatrix();
 							Period p = measurements.getLongestDurationWithLessThan(
@@ -114,7 +113,7 @@ public class MainApp {
 							iohandler.getMatrixHandler().appendText(
 									p.getStartDate() + "\ntot\n" + p.getEndDate());
 						}),
-						new IntegerMenuItem("Langste natte periode", 0, 10, (i) -> {
+						new MenuItem("Langste natte periode", 0, 10, (i) -> {
 							//.setAction(() -> {
 							iohandler.getMatrixHandler().clearMatrix();
 							Period p = measurements.getLongestDurationWithMoreThan(

@@ -22,6 +22,18 @@ public class MenuItem {
 		this.items = new ArrayList<>();
 	}
 	
+	public MenuItem(String title, int min, int max, Selection s) {
+		this(title);
+		List<MenuItem> temp = new ArrayList<>();
+		for (int i = min;i < max;i++) {
+			final int ip = i;
+			temp.add(new MenuItem(String.valueOf(i)).setAction(() -> {
+				if (s != null) s.selected(ip);
+			}));
+		}
+		addAll(temp);
+	}
+	
 	public MenuItem addAll(MenuItem... items) {
 		return addAll(Arrays.asList(items));
 	}
@@ -77,5 +89,10 @@ public class MenuItem {
 	
 	public void setTitle(String value) {
 		title = value;
+	}
+	
+	@FunctionalInterface
+	public interface Selection {
+		void selected(int number);
 	}
 }
