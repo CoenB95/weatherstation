@@ -5,10 +5,13 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.Scanner;
 
 import weatherstation.IOHandler.ButtonHandler;
+import weatherstation.IOHandler.MatrixHandler;
 import weatherstation.menu.fallback.Menu;
 import weatherstation.menu.fallback.MenuItem;
 import weatherstation.sql.RawMeasurement;
@@ -18,6 +21,8 @@ public class MainApp {
 
 	IOHandler iohandler;
 	Measurements measurements;
+	ButtonHandler menu_buttons;
+	Menu menu;
 	
 	public static void main(String[] args) {
 		new MainApp().mainLogic();
@@ -46,10 +51,10 @@ public class MainApp {
 							.getOutsideTemperature(), false);
 					iohandler.writeNumber(IOHandler.NUMBER_FIELD_2,
 							measurements.getLowest(Measurement.TEMPERATURE_OUTSIDE)
-							.get(0), false);
+							, false);
 					iohandler.writeNumber(IOHandler.NUMBER_FIELD_3,
 							measurements.getHighest(Measurement.TEMPERATURE_OUTSIDE)
-							.get(0), false);
+							, false);
 				}),
 				new MenuItem("Zon").setAction(() -> { 
 					iohandler.getMatrixHandler().setText("Opkomst:   " +
@@ -136,7 +141,7 @@ public class MainApp {
 		};
 
 		/**1st menu: the period selection.*/
-		Menu menu = new Menu(iohandler, "Periode:",
+		menu = new Menu(iohandler, "Periode:",
 				new MenuItem("Alle metingen").setAction(() -> {
 					iohandler.getMatrixHandler().clearMatrix();
 					iohandler.getMatrixHandler().appendText("laden...");
@@ -167,41 +172,68 @@ public class MainApp {
 					measurements.fetchPeriod(LocalDate.now(), 
 							LocalDate.now());
 				}).addAll(category_one_day_menu),
-				new MenuItem("Custom").setAction(() -> {
-					iohandler.getMatrixHandler().setText("Voer datum in via\nconsole\n");
-					Scanner s = new Scanner(System.in);
-					LocalDate date = LocalDate.now();
-					try {
-						date = LocalDate.parse(s.nextLine(),
-								DateTimeFormatter.ofPattern("d-M-u"));
-					} catch (DateTimeParseException e) {
-						e.printStackTrace();
-						iohandler.getMatrixHandler().setText("Kan hier geen datum "
-								+ "uithalen\n");
-						IO.delay(2000);
-					}
-					s.close();
-					iohandler.getMatrixHandler().addLine(date + " laden...");
-					measurements.fetchPeriod(date, date);
-				}).addAll(category_one_day_menu)
+				new MenuItem("Dag keuze").setAction((button) -> {
+					return customDateAction(button, false);
+				}).addAll(category_one_day_menu),
+				new MenuItem("Periode keuze").setAction((button) -> {
+					return customDateAction(button, true);
+				}).addAll(category_menu)
 				);
 		menu.draw();
-
-		iohandler.setOnButtonListener(new ButtonHandler() {
+				
+		menu_buttons = new ButtonHandler() {
 			@Override
 			public void onButtonClicked(int button) {
-				switch (button) {
-				case BUTTON_LEFT:
-					menu.focusPrevious();
-					break;
-				case BUTTON_RIGHT:
-					menu.focusNext();
-					break;
-				case BUTTON_SELECT:
-					menu.select();
-				}
+				menu.handleButton(button);
 			}
-		});
+		};
+		iohandler.addOnButtonListener(menu_buttons);
+	}
+	
+	private int custom_index = -1;
+	private TemporalAmount custom_temp_amount;
+	private LocalDate custom_start;
+	private LocalDate custom_end;
+	private ButtonHandler custom_buttons;
+	
+	private boolean customDateAction(int button, boolean period) {
+		if (custom_index < 0) {
+			custom_start = LocalDate.now();
+			custom_end = LocalDate.now();
+			custom_index = 0;
+			custom_temp_amount = java.time.Period.ofYears(1);
+		}
+		MatrixHandler m = iohandler.getMatrixHandler();
+		switch (button) {
+		case ButtonHandler.BUTTON_LEFT: 
+			if (custom_index < 3)
+				custom_start = custom_start.minus(custom_temp_amount);
+			else custom_end = custom_end.minus(custom_temp_amount); break;
+		case ButtonHandler.BUTTON_RIGHT:
+			if (custom_index < 3)
+				custom_start = custom_start.plus(custom_temp_amount);
+			else custom_end = custom_end.plus(custom_temp_amount); break;
+		case ButtonHandler.BUTTON_SELECT:
+			custom_index++;
+			if (custom_index % 3 == 0) custom_temp_amount = java.time.Period.ofYears(1);
+			if (custom_index % 3 == 1) custom_temp_amount = java.time.Period.ofMonths(1);
+			if (custom_index % 3 == 2) custom_temp_amount = java.time.Period.ofDays(1);
+			break;
+		}
+		if (custom_index < 3) custom_end = LocalDate.from(custom_start);
+		m.setText(custom_index < 3 ? "Start: " + custom_start :
+			"Eind:  " + custom_end);
+		if (custom_index % 3 == 0) m.drawUnderline(0, 7, 10);
+		if (custom_index % 3 == 1) m.drawUnderline(0, 12, 13);
+		if (custom_index % 3 == 2) m.drawUnderline(0, 15, 16);
+		
+		if (custom_index >= (period ? 6 : 3)) {
+			custom_index = -1;
+			iohandler.getMatrixHandler().setText("laden...");
+			System.out.println("Van " + custom_start + " tot " + custom_end);
+			measurements.fetchPeriod(custom_start, custom_end);
+			return true;
+		} else return false;
 	}
 
 	/**3rd level menu creator. Makes the statistics menu (double-only).*/
@@ -209,13 +241,13 @@ public class MainApp {
 		return new MenuItem[] {
 			new MenuItem("Hoogste").setAction(() -> {
 				iohandler.getMatrixHandler().clearMatrix();
-				iohandler.getMatrixHandler().appendText(printList(
-						measurements.getHighest(field)) + " " + text);
+				iohandler.getMatrixHandler().appendText(
+						measurements.getHighest(field) + " " + text);
 			}),
 			new MenuItem("Laagste").setAction(() -> {
 				iohandler.getMatrixHandler().clearMatrix();
-				iohandler.getMatrixHandler().appendText(printList(
-						measurements.getLowest(field)) + " " + text);
+				iohandler.getMatrixHandler().appendText(
+						measurements.getLowest(field) + " " + text);
 			}),
 			new MenuItem("Modus").setAction(() -> {
 				iohandler.getMatrixHandler().clearMatrix();
@@ -229,8 +261,8 @@ public class MainApp {
 			}),
 			new MenuItem("Gemiddelde").setAction(() -> {
 				iohandler.getMatrixHandler().clearMatrix();
-				iohandler.getMatrixHandler().appendText(printList(
-						measurements.getAverage(field)) + " " + text);
+				iohandler.getMatrixHandler().appendText(
+						measurements.getAverage(field) + " " + text);
 			}),
 			new MenuItem("Standaard Deviatie").setAction(() -> {
 				iohandler.getMatrixHandler().clearMatrix();

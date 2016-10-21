@@ -5,13 +5,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import weatherstation.IOHandler.ButtonHandler;
+
 public class MenuItem {
 	
 	private String title;
 	private List<MenuItem> items;
 	private MenuItem parent;
 	private boolean backAllowed = true;
-	private Runnable action;
+	private InteractiveAction action;
 	
 	public MenuItem() {
 		this("");
@@ -44,10 +46,6 @@ public class MenuItem {
 		return this;
 	}
 	
-	public Runnable getAction() {
-		return action;
-	}
-	
 	public MenuItem getItem(int i) {
 		if (backAllowed && i == items.size()) return parent;
 		else if (i <= items.size()) return items.get(i);
@@ -74,13 +72,20 @@ public class MenuItem {
 		return items.size() == 0;
 	}
 	
-	public void runAction() {
-		action.run();
+	public boolean runAction(int button) {
+		return action.run(button);
+	}
+	
+	public MenuItem setAction(InteractiveAction value) {
+		action = value;
+		return this;
 	}
 	
 	public MenuItem setAction(Runnable value) {
-		action = value;
-		return this;
+		return setAction((button) -> {
+			value.run();
+			return true;
+		});
 	}
 	
 	protected void setBackAllowed(boolean value) {
@@ -89,6 +94,16 @@ public class MenuItem {
 	
 	public void setTitle(String value) {
 		title = value;
+	}
+	
+	@FunctionalInterface
+	public interface InteractiveAction {
+		/**
+		 * @param button the pressed button's id.
+		 * @return true if the action is done and the menu may return,
+		 * false otherwise.
+		 */
+		public abstract boolean run(int button);
 	}
 	
 	@FunctionalInterface

@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 
 import weatherstation.IOHandler;
+import weatherstation.IOHandler.ButtonHandler;
 import weatherstation.IOHandler.MatrixHandler;
 
 public class Menu {
@@ -15,6 +16,7 @@ public class Menu {
 	private List<MenuItem> menuStack;
 	private int index = -1;
 	private boolean inAction = false;
+	private boolean inLeaf = false;
 	
 	public Menu(IOHandler h, String title, MenuItem... baseItems) {
 		this(h, title, Arrays.asList(baseItems));
@@ -79,18 +81,48 @@ public class Menu {
 		} else System.out.println("No further");
 	}
 	
-	public void select() {
-		if (!currentMenu.isBackIndex(index) && currentMenu.getItem(index).hasAction()) {
-			if (inAction) {
-				inAction = false;
-				draw();
-			}
-			else {
-				currentMenu.getItem(index).runAction();
-				if (currentMenu.getItem(index).isEmpty()) inAction = true;
+	public void handleButton(int button) {
+		if (inAction) {
+			inAction = !currentMenu.getItem(index).runAction(button);
+			inLeaf = !inAction;
+			if (!inAction) System.out.println("The action has finished listening.");
+		}
+		if (!inAction) {
+			switch (button) {
+			case ButtonHandler.BUTTON_LEFT:
+				if (!inLeaf) focusPrevious();
+				break;
+			case ButtonHandler.BUTTON_RIGHT:
+				if (!inLeaf) focusNext();
+				break;
+			case ButtonHandler.BUTTON_SELECT:
+				select();
 			}
 		}
-		if (!currentMenu.getItem(index).isEmpty()) {
+	}
+	
+	public void notifyActionDone() {
+		inAction = false;
+	}
+	
+	public void select() {
+		if (!currentMenu.isBackIndex(index) && currentMenu.getItem(index).hasAction()) {
+			if (inLeaf) {
+				System.out.println("Return from leaf. Turn on controls.");
+				inLeaf = false;
+				draw();
+			} else {
+				inAction = !currentMenu.getItem(index).runAction(
+						ButtonHandler.BUTTON_NONE);
+				// In case this is a leaf, it will probably want to show
+				// something. Return to the menu on next select click.
+				inLeaf = currentMenu.getItem(index).isEmpty();
+				if (inAction) System.out.println("Interactive action detected."
+						+ " Pass button input to action. Shut off controls.");
+				if (inLeaf) System.out.println("Leaf detected. Shut off controls.");
+			}
+		}
+		if (!currentMenu.getItem(index).isEmpty() && !inAction && !inLeaf) {
 			if (currentMenu.isBackIndex(index)) {
 				currentMenu = menuStack.get(menuStack.size() - 1);
 				menuStack.remove(menuStack.size() - 1);

@@ -1,5 +1,7 @@
 package weatherstation;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -18,7 +20,11 @@ public class IOHandler {
 
 	private MatrixHandler matrixHandler;
 	
-	private ButtonHandler buttonListener;
+	// Additional ADD and REMOVE 'queues' are used to prevent errors
+	// when modifying the list while iterating over it.
+	private List<ButtonHandler> addition_queue;
+	private List<ButtonHandler> removal_queue;
+	private List<ButtonHandler> buttonListeners;
 	private boolean left_on;
 	private boolean right_on;
 	private boolean select_on;
@@ -42,6 +48,9 @@ public class IOHandler {
 		IO.init();
 		
 		matrixHandler = new MatrixHandler();
+		addition_queue = new ArrayList<>();
+		removal_queue = new ArrayList<>();
+		buttonListeners = new ArrayList<>();
 		setupButtonHandler();
 	}
 	
@@ -71,8 +80,12 @@ public class IOHandler {
 		}
 	}
 
-	public void setOnButtonListener(ButtonHandler b) {
-		buttonListener = b;
+	public void addOnButtonListener(ButtonHandler b) {
+		addition_queue.add(b);
+	}
+	
+	public void removeOnButtonListener(ButtonHandler b) {
+		removal_queue.add(b);
 	}
 	
 	/**
@@ -100,18 +113,28 @@ public class IOHandler {
 		ScheduledExecutorService service = 
 				Executors.newSingleThreadScheduledExecutor();
 		service.scheduleAtFixedRate(() -> {
-			if (buttonListener == null) return;
+			while (!addition_queue.isEmpty()) {
+				buttonListeners.add(0,addition_queue.get(addition_queue.size() - 1));
+				addition_queue.remove(addition_queue.size() - 1);
+			}
+			while (!removal_queue.isEmpty()) {
+				buttonListeners.remove(removal_queue.get(removal_queue.size() - 1));
+				removal_queue.remove(removal_queue.size() - 1);
+			}
 			if ((IO.readShort(ButtonHandler.BUTTON_LEFT) == 1) != left_on) {
 				left_on = !left_on;
-				buttonListener.onButtonClicked(ButtonHandler.BUTTON_LEFT);
+				for (ButtonHandler b : buttonListeners)
+					b.onButtonClicked(ButtonHandler.BUTTON_LEFT);
 			}
 			if ((IO.readShort(ButtonHandler.BUTTON_RIGHT) == 1) != right_on) {
 				right_on = !right_on;
-				buttonListener.onButtonClicked(ButtonHandler.BUTTON_RIGHT);
+				for (ButtonHandler b : buttonListeners)
+					b.onButtonClicked(ButtonHandler.BUTTON_RIGHT);
 			}
 			if ((IO.readShort(ButtonHandler.BUTTON_SELECT) == 1) != select_on) {
 				select_on = !select_on;
-				buttonListener.onButtonClicked(ButtonHandler.BUTTON_SELECT);
+				for (ButtonHandler b : buttonListeners)
+					b.onButtonClicked(ButtonHandler.BUTTON_SELECT);
 			}
 		}, 500, 50, TimeUnit.MILLISECONDS);
 	}
@@ -297,6 +320,15 @@ public class IOHandler {
 						((y1 + (int) (diff_y/largest*o)) << Y_POS));
 			}
 		}
+		
+		public void drawUnderline(int row, int position) {
+			drawUnderline(row, position, position);
+		}
+		
+		public void drawUnderline(int row, int startPosition, int endPosition) {
+			drawLine(2 + startPosition * 6, 10 + row * 10,
+					2 + endPosition * 6 + 5, 10 + row * 10);
+		}
 
 		/**Clears the matrix to replace its contents with this new text.*/
 		public void setText(String text) {
@@ -312,6 +344,7 @@ public class IOHandler {
 	
 	@FunctionalInterface
 	public interface ButtonHandler {
+		public static final int BUTTON_NONE = 0x00;
 		public static final int BUTTON_LEFT = 0x90;
 		public static final int BUTTON_RIGHT = 0x100;
 		public static final int BUTTON_SELECT = 0x80;
