@@ -74,7 +74,7 @@ public class Measurements {
 	
 	public double getDegreeDays() {
 		double days = 0;
-		for (double d:getAverage(Measurement.TEMPERATURE_OUTSIDE)) {
+		for (double d:getAverageDaily(Measurement.TEMPERATURE_OUTSIDE)) {
 			if (d < 18) days += 18 - d;
 		}
 		return days;
@@ -83,7 +83,7 @@ public class Measurements {
 	public boolean hadHeatwave() {
 		int count_25 = 0;
 		int count_30 = 0;
-		for (double d : getHighest(Measurement.TEMPERATURE_OUTSIDE)) {
+		for (double d : getHighestDaily(Measurement.TEMPERATURE_OUTSIDE)) {
 			if (d >= 25) count_25++;
 			else count_25 = 0;
 			if (d >= 30) count_30++;
@@ -98,23 +98,18 @@ public class Measurements {
 	 * @param field
 	 * @return
 	 */
-	public List<Double> getHighest(int field) {
-		List<Double> result = new ArrayList<>();
-		if (measurements.isEmpty()) return result;
+	public double getHighest(int field) {
+		List<Double> doubles = new ArrayList<>();
+		if (measurements.isEmpty()) return -1;
 		for (Measurement m:measurements) {
-			result.add(m.getDouble(field));
+			doubles.add(m.getDouble(field));
 		}
-		int amount = result.size(); 
-			int x = 0;
-			double max = -300.0;
-			while (amount > x){
-			if (result.get(x)> max) max = result.get(x);
-			x++;
-			}
-			result.clear();
-			result.add(max);
-			return result;
+		double max = doubles.get(0);
+		for (double d:doubles) {
+			if (d > max) max = d;
 		}
+		return max;
+	}
 	
 	public List<Double> getHighestDaily(int field) {
 		List<Double> result = new ArrayList<>();
@@ -129,23 +124,18 @@ public class Measurements {
 		return result;
 	}
 		
-	public List<Double> getLowest(int field) {
-		List<Double> result = new ArrayList<>();
-		if (measurements.isEmpty()) return result;
+	public double getLowest(int field) {
+		List<Double> doubles = new ArrayList<>();
+		if (measurements.isEmpty()) return -1;
 		for (Measurement m:measurements) {
-			result.add(m.getDouble(field));
+			doubles.add(m.getDouble(field));
 		}
-		int amount = result.size(); 
-			int x = 0;
-			double min = 300.0;
-			while (amount > x){
-			if (result.get(x)< min) min = result.get(x);
-			x++;
-			}
-			result.clear();
-			result.add(min);
-			return result;
+		double min = doubles.get(0);
+		for (double d:doubles) {
+			if (d < min) min = d;
 		}
+		return min;
+	}
 	
 	public List<Double> getLowestDaily(int field) {
 		List<Double> result = new ArrayList<>();
@@ -174,28 +164,20 @@ public class Measurements {
 	 * @param field
 	 * @return
 	 */
-	public List<Double> getAverage(int field) {
-		List<Double> result = new ArrayList<>();
-		if (measurements.isEmpty()) return result;
+	public double getAverage(int field) {
+		double sum = 0;
+		double count = 0;
+		if (measurements.isEmpty()) return -1;
 		for (Measurement m:measurements) {
-			result.add(m.getDouble(field));
+			sum += m.getDouble(field);
+			count++;
 		}
-		double avg = 0;
-		int total = 0;
-		int amound = result.size();
-		while(total < amound){
-		avg += result.get(total);
-		total++;
-		}
-	result.clear();
-	result.add(avg/total);
-	return result;
+		return sum/count;
 	}
 	
 	public List<Double> getAverageDaily(int field) {
 		List<Double> result = new ArrayList<>();
 		if (measurements.isEmpty()) return result;
-		LocalDateTime date = measurements.get(0).getDateStamp();
 		for (List<Measurement> ms:measurementsPerDay) {
 			double avg = 0;
 			double total = 0;
@@ -259,7 +241,7 @@ public class Measurements {
 		Period period = new Period(LocalDateTime.now(), LocalDateTime.now());
 		if (measurementsPerDay.isEmpty()) return null;
 		LocalDateTime start = null;
-		List<Double> doubles = getHighest(field);
+		List<Double> doubles = getHighestDaily(field);
 		for (int i = 0;i < doubles.size();i++) {
 			if (start == null) {
 				if (doubles.get(i) >= min) 
